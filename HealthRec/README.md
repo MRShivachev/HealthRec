@@ -57,5 +57,3 @@ To set up the HealthRec project locally, follow these steps:
 ---
 
 Thank you for checking out HealthRec! We hope this application helps improve patient information management in healthcare settings.
-
----
