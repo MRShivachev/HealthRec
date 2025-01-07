@@ -13,8 +13,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dace4ef5-4af4-4491-b414-5e585123642d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/HealthRec.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.HealthRec/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HealthRec/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/ForgotPassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/ForgotPassword.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/Register.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/Register.cshtml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/ResetPassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/ResetPassword.cshtml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +45,7 @@
     ".NET Launch Settings Profile.HealthRec.Presentation: http.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "Main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -154,6 +156,7 @@
       <updated>1736201094749</updated>
       <workItem from="1736201095273" duration="266000" />
       <workItem from="1736201374488" duration="10223000" />
+      <workItem from="1736212242887" duration="75000" />
     </task>
     <servers />
   </component>
@@ -163,5 +166,24 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/src/HealthRec.Presentation/Controllers/AuthenticationController.cs</url>
+          <line>98</line>
+          <properties documentPath="C:\Users\shiva\OneDrive\Работен плот\HealthRec\src\HealthRec.Presentation\Controllers\AuthenticationController.cs" containingFunctionPresentation="Method 'Register'">
+            <startOffsets>
+              <option value="3054" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3078" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
