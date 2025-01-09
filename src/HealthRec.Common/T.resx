@@ -19,30 +19,72 @@
         <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
     </resheader>
     <data name="UserLockedOutErrorMessage" xml:space="preserve">
-        <value />
+        <value>Профилът ви е временно заключен</value>
     </data>
     <data name="InvalidLoginErrorMessage" xml:space="preserve">
-        <value />
+        <value>Имейлът или паролата не съвпадат</value>
     </data>
     <data name="RegisterSuccessMessage" xml:space="preserve">
-        <value />
+        <value>Успешна регистрация!</value>
     </data>
     <data name="ForgotPasswordSuccessMessage" xml:space="preserve">
-        <value />
+        <value>Вашата заявка беше успешна</value>
     </data>
     <data name="EmailIsRequiredErrorMessage" xml:space="preserve">
-        <value />
+        <value>Имейлът е задължително поле</value>
     </data>
     <data name="PasswordIsRequiredErrorMessage" xml:space="preserve">
-        <value />
+        <value>Паролата е задължително поле</value>
     </data>
     <data name="PasswordIsDifferentThanConfirmedErrorMessage" xml:space="preserve">
-        <value />
+        <value>Потвърдената парола не съвпада</value>
     </data>
     <data name="EmailIsInvalidErrorMessage" xml:space="preserve">
-        <value />
+        <value>Имейлът е в невалиден формат</value>
     </data>
     <data name="ResetPasswordTitle" xml:space="preserve">
-        <value />
+        <value>Смяна на паролата</value>
+    </data>
+    <data name="LoginTitle" xml:space="preserve">
+        <value>Вход</value>
+    </data>
+    <data name="EmailTitle" xml:space="preserve">
+        <value>Имейл</value>
+    </data>
+    <data name="EmailPlaceholder" xml:space="preserve">
+        <value>kgg@example.abv</value>
+    </data>
+    <data name="PasswordTitle" xml:space="preserve">
+        <value>Парола</value>
+    </data>
+    <data name="PasswordPlaceholder" xml:space="preserve">
+        <value>********</value>
+    </data>
+    <data name="RememberMeLabel" xml:space="preserve">
+        <value>Запомни ме</value>
+    </data>
+    <data name="ForgotPasswordLinkText" xml:space="preserve">
+        <value>Забравена парола?</value>
+    </data>
+    <data name="LoginButtonText" xml:space="preserve">
+        <value>Вход</value>
+    </data>
+    <data name="NoAccountLabel" xml:space="preserve">
+        <value>Нямате акаунт?</value>
+    </data>
+    <data name="CreateAccountLinkText" xml:space="preserve">
+        <value>Създаване на профил</value>
+    </data>
+    <data name="ConfirmPasswordTitle" xml:space="preserve">
+        <value>Потвърждаване на парола</value>
+    </data>
+    <data name="ConfirmPasswordPlaceholder" xml:space="preserve">
+        <value>********</value>
+    </data>
+    <data name="RegisterButtonText" xml:space="preserve">
+        <value>Регистрация</value>
+    </data>
+    <data name="RegisterTitle" xml:space="preserve">
+        <value>Регистрация</value>
     </data>
 </root>

@@ -60,7 +60,34 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ********.
+        /// </summary>
+        public static string ConfirmPasswordPlaceholder {
+            get {
+                return ResourceManager.GetString("ConfirmPasswordPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Потвърждаване на парола.
+        /// </summary>
+        public static string ConfirmPasswordTitle {
+            get {
+                return ResourceManager.GetString("ConfirmPasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Създаване на профил.
+        /// </summary>
+        public static string CreateAccountLinkText {
+            get {
+                return ResourceManager.GetString("CreateAccountLinkText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Имейлът е в невалиден формат.
         /// </summary>
         public static string EmailIsInvalidErrorMessage {
             get {
@@ -69,7 +96,7 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Имейлът е задължително поле.
         /// </summary>
         public static string EmailIsRequiredErrorMessage {
             get {
@@ -78,7 +105,34 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to kgg@example.abv.
+        /// </summary>
+        public static string EmailPlaceholder {
+            get {
+                return ResourceManager.GetString("EmailPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Имейл.
+        /// </summary>
+        public static string EmailTitle {
+            get {
+                return ResourceManager.GetString("EmailTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Забравена парола?.
+        /// </summary>
+        public static string ForgotPasswordLinkText {
+            get {
+                return ResourceManager.GetString("ForgotPasswordLinkText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вашата заявка беше успешна.
         /// </summary>
         public static string ForgotPasswordSuccessMessage {
             get {
@@ -87,7 +141,7 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Имейлът или паролата не съвпадат.
         /// </summary>
         public static string InvalidLoginErrorMessage {
             get {
@@ -96,7 +150,34 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Вход.
+        /// </summary>
+        public static string LoginButtonText {
+            get {
+                return ResourceManager.GetString("LoginButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Вход.
+        /// </summary>
+        public static string LoginTitle {
+            get {
+                return ResourceManager.GetString("LoginTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Нямате акаунт?.
+        /// </summary>
+        public static string NoAccountLabel {
+            get {
+                return ResourceManager.GetString("NoAccountLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Потвърдената парола не съвпада.
         /// </summary>
         public static string PasswordIsDifferentThanConfirmedErrorMessage {
             get {
@@ -105,7 +186,7 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Паролата е задължително поле.
         /// </summary>
         public static string PasswordIsRequiredErrorMessage {
             get {
@@ -114,7 +195,34 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to ********.
+        /// </summary>
+        public static string PasswordPlaceholder {
+            get {
+                return ResourceManager.GetString("PasswordPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Парола.
+        /// </summary>
+        public static string PasswordTitle {
+            get {
+                return ResourceManager.GetString("PasswordTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Регистрация.
+        /// </summary>
+        public static string RegisterButtonText {
+            get {
+                return ResourceManager.GetString("RegisterButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Успешна регистрация!.
         /// </summary>
         public static string RegisterSuccessMessage {
             get {
@@ -123,7 +231,25 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Регистрация.
+        /// </summary>
+        public static string RegisterTitle {
+            get {
+                return ResourceManager.GetString("RegisterTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Запомни ме.
+        /// </summary>
+        public static string RememberMeLabel {
+            get {
+                return ResourceManager.GetString("RememberMeLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Смяна на паролата.
         /// </summary>
         public static string ResetPasswordTitle {
             get {
@@ -132,7 +258,7 @@ namespace HealthRec.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Профилът ви е временно заключен.
         /// </summary>
         public static string UserLockedOutErrorMessage {
             get {

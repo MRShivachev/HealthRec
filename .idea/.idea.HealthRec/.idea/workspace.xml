@@ -13,10 +13,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dace4ef5-4af4-4491-b414-5e585123642d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.HealthRec/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.HealthRec/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/ForgotPassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/ForgotPassword.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/Register.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/Register.cshtml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/ResetPassword.cshtml" beforeDir="false" afterPath="$PROJECT_DIR$/src/HealthRec.Presentation/Views/Authentication/ResetPassword.cshtml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/HealthRec.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +27,17 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/55fc124deeb24cf0a4167aeed205d86d408a0/32/54439b18/IActionResult.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/91669bbc81cc4a48a176f5651d8d3a8ab08a0/cb/67696b17/Controller.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/13e79b2a7b78394ccf591d3454bff5bfb14e692da011a7e38b66c2312b365a/String.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1b7d7cb6609f8d85f36dfd4df6123c8060f4fd5e1699c5f959de6e918d7351/RazorPageOfT.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5aeaf34e3a929e754e448d9dd811825f0433c7d3f959b3da8b1ba51b62ef21/ModelStateDictionary.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/96a4cc66aa48dda8a9d8be8febec4a769fc143f7a86dd53ecdebfb9c3177d/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/a6d14863b3cb9a2e26c6c18cca7b41b410c097baeadd34e87ef8d015451157/ModelError.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ab3652e3e0c1780ce9b7fbb6938dbec71c093d375262e61691b468390c520/KeyValuePair.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/fcaf1bd5bd275d432376fe49828f74e6a5c43d59ca227d6d301796e97095a9f8/CompareAttribute.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
 }</component>
@@ -40,20 +49,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.HealthRec.Presentation: http.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Main",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.HealthRec.Presentation: http.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.HealthRec.Presentation: http">
     <configuration name="HealthRec: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/HealthRec.Presentation/HealthRec.Presentation.csproj" />
@@ -156,7 +166,9 @@
       <updated>1736201094749</updated>
       <workItem from="1736201095273" duration="266000" />
       <workItem from="1736201374488" duration="10223000" />
-      <workItem from="1736212242887" duration="75000" />
+      <workItem from="1736211962170" duration="367000" />
+      <workItem from="1736364953670" duration="6440000" />
+      <workItem from="1736378895285" duration="6644000" />
     </task>
     <servers />
   </component>
@@ -166,24 +178,5 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/src/HealthRec.Presentation/Controllers/AuthenticationController.cs</url>
-          <line>98</line>
-          <properties documentPath="C:\Users\shiva\OneDrive\Работен плот\HealthRec\src\HealthRec.Presentation\Controllers\AuthenticationController.cs" containingFunctionPresentation="Method 'Register'">
-            <startOffsets>
-              <option value="3054" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3078" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

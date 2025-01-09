@@ -1,18 +1,53 @@
+@using HealthRec.Common
+@using HealthRec.Presentation.Extensions
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model LoginViewModel
-
 @{
-    Layout = null;
+    Layout = "_AuthLayout";
+    var globalError = this.ViewContext.ModelState.GetFirstGlobalError();
 }
 
-<!DOCTYPE html>
+@if (!string.IsNullOrWhiteSpace(globalError))
+{
+<span class="d-block text-small alert alert-danger">
+        @globalError
+    </span>
+}
 
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
-</div>
-</body>
-</html>
+<p class="text-center">HealthRec</p>
+<form asp-action="Login" method="post">
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">@T.EmailTitle</label>
+        <input type="email" 
+               asp-for="Email"
+               class="form-control" 
+               aria-describedby="emailHelp" 
+               placeholder="@T.EmailPlaceholder">
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+    <div class="mb-4">
+        <label asp-for="Password">@T.PasswordTitle</label>
+        <input type="password" 
+               asp-for="Password"
+               class="form-control"  
+               placeholder="@T.PasswordPlaceholder">
+        <span class="text-danger" asp-validation-for="Password"></span>
+    </div>
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="form-check">
+            <input class="form-check-input primary"
+                   type="checkbox" 
+                   value=""
+                   asp-for="RememberMe">
+            <label class="form-check-label text-dark" asp-for="RememberMe">
+                @T.RememberMeLabel
+            </label>
+        </div>
+        <a class="text-primary fw-bold" href="@Url.Action("ForgotPassword")">@T.ForgotPasswordLinkText</a>
+    </div>
+    <button type="submit" class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2">@T.LoginButtonText</button>
+    <div class="d-flex align-items-center justify-content-center">
+        <p class="fs-6 mb-0 ">@T.NoAccountLabel</p>
+        <a class="text-primary fw-bold ms-2" href=@Url.Action("Register")>@T.CreateAccountLinkText</a>
+    </div>
+</form>
