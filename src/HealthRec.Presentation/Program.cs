@@ -1,57 +1,70 @@
 using HealthRec.Data;
-using HealthRec.Presentation;
 using HealthRec.Services;
+using HealthRec.Services.Identity.Constants;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
-var builder = WebApplication.CreateBuilder(args);
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-builder.Services
-    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(
-        CookieAuthenticationDefaults.AuthenticationScheme,
-        options =>
+        builder.Services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.LoginPath = "/login";
+                    options.LogoutPath = "/logout";
+                    options.AccessDeniedPath = "/access-denied";
+                });
+
+        builder.Services.AddAuthorization(options =>
         {
-            options.LoginPath = "/login";
-            options.LogoutPath = "/logout";
+            options.AddPolicy(DefaultPolicies.AdminPolicy, policyBuilder =>
+            {
+                policyBuilder.RequireAuthenticatedUser();
+                policyBuilder.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+                policyBuilder.RequireRole(DefaultRoles.Admin);
+            });
+
+            options.AddPolicy(DefaultPolicies.UserPolicy, policyBuilder =>
+            {
+                policyBuilder.RequireAuthenticatedUser();
+                policyBuilder.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+                policyBuilder.RequireRole(DefaultRoles.User);
+            });
         });
 
-builder.Services.AddData(builder.Configuration);
-builder.Services.AddServices(builder.Configuration);
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddData(builder.Configuration);
+        builder.Services.AddServices(builder.Configuration);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Services.AddMvc();
 
+        var app = builder.Build();
 
-builder.Services.AddMvc();
+        await app.PrepareAsync();
 
-var app = builder.Build();
+        if (app.Environment.IsDevelopment())
+        {
+            // do nothing
+        }
+        else
+        {
+            app.UseExceptionHandler("/Home/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+            app.UseHsts();
+            app.UseHttpsRedirection();
+        }
 
-await app.PrepareAsync();
+        app.UseStaticFiles();
+        app.UseAuthentication();
+        app.UseRouting();
+        app.UseAuthorization();
+        app.MapControllers();
 
-if (app.Environment.IsDevelopment())
-{
-    // do nothing
+        app.Run();
+    }
 }
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-    app.UseHttpsRedirection();
-}
-
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
