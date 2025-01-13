@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <Folder Include="Common\Constants\" />
+      <Folder Include="Identity\Internals\" />
     </ItemGroup>
 
 </Project>

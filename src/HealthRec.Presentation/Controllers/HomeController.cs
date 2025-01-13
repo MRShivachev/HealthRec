@@ -33,7 +33,7 @@ public class HomeController : Controller
             Name = "PEsho",
         };
 
-        this.ViewBag.Message = "Welcome to EduSystem!!";
+        this.ViewBag.Message = "Welcome to HealthRec!!";
 
         return this.View(viewModel);
     }
