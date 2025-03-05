@@ -23,9 +23,20 @@
                         <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Patient_records">Patient records</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About_us">About us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Contacts">Contacts</a>
                     </li>
                 </ul>
+                <a href="@Url.Action("Login", "Authentication")">
+                <button class="button-18" style="float: right" type="button">Login</button>
+                </a>
+
+
             </div>
         </div>
     </nav>

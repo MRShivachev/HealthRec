@@ -10,6 +10,8 @@ using Microsoft.Extensions.Logging;
 
 namespace HealthRec.Presentation.Controllers;
 
+[AllowAnonymous]
+[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class HomeController : Controller
 {
     private readonly IEmailService emailService;
@@ -24,7 +26,7 @@ public class HomeController : Controller
     }
 
     [HttpGet("/")]
-    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+
     public async Task<IActionResult> Index()
     {
         var viewModel = new IndexViewModel
