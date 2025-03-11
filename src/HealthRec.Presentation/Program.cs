@@ -29,17 +29,31 @@ public class Program
                 policyBuilder.RequireRole(DefaultRoles.Admin);
             });
 
-            options.AddPolicy(DefaultPolicies.UserPolicy, policyBuilder =>
+            options.AddPolicy(DefaultPolicies.DoctorPolicy, policyBuilder =>
             {
                 policyBuilder.RequireAuthenticatedUser();
                 policyBuilder.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
-                policyBuilder.RequireRole(DefaultRoles.User);
+                policyBuilder.RequireRole(DefaultRoles.Patient);
+            });
+            options.AddPolicy(DefaultPolicies.PatientPolicy, policyBuilder =>
+            {
+                policyBuilder.RequireAuthenticatedUser();
+                policyBuilder.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+                policyBuilder.RequireRole(DefaultRoles.Patient);
             });
         });
 
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddData(builder.Configuration);
         builder.Services.AddServices(builder.Configuration);
+
+        builder.Services.AddDistributedMemoryCache();
+        builder.Services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+        });
 
         builder.Services.AddMvc();
 
@@ -60,6 +74,7 @@ public class Program
         }
 
         app.UseStaticFiles();
+        app.UseSession();
         app.UseAuthentication();
         app.UseRouting();
         app.UseAuthorization();

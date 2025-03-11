@@ -1,21 +1,18 @@
-using System;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
+using Azure.Core;
 using HealthRec.Common;
-using HealthRec.Data;
+using Essentials.Extensions;
+using HealthRec.Data.Entities;
 using HealthRec.Presentation.Extensions;
 using HealthRec.Presentation.Models;
 using HealthRec.Services.Common.Contracts;
+using HealthRec.Services.Identity.Constants;
 using HealthRec.Services.Identity.Extensions;
-using Essentials.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-
-namespace HealthRec.Presentation.Controllers;
 
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class AuthenticationController : Controller
@@ -49,14 +46,14 @@ public class AuthenticationController : Controller
             return this.RedirectToDefault();
         }
 
-        var model = new LoginViewModel();
+        var model = new PatientLoginViewModel();
         return this.View(model);
     }
 
     [HttpPost("/login")]
     [ValidateAntiForgeryToken]
     [AllowAnonymous]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    public async Task<IActionResult> Login(PatientLoginViewModel model)
     {
         if (this.IsUserAuthenticated())
         {
@@ -68,13 +65,13 @@ public class AuthenticationController : Controller
             var user = await this.userManager.FindByEmailAsync(model.Email!);
             if (user == null || !(await this.userManager.CheckPasswordAsync(user, model.Password!)))
             {
-                this.ModelState.AddModelError(string.Empty, Common.T.InvalidLoginErrorMessage);
+                this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
                 return this.View(model);
             }
 
             if (await this.userManager.IsLockedOutAsync(user))
             {
-                this.ModelState.AddModelError(string.Empty, Common.T.UserLockedOutErrorMessage);
+                this.ModelState.AddModelError(string.Empty, T.UserLockedOutErrorMessage);
                 return this.View(model);
             }
 
@@ -86,51 +83,118 @@ public class AuthenticationController : Controller
         return this.View(model);
     }
 
-    [HttpGet("/register")]
-    [AllowAnonymous]
-    public IActionResult Register()
+    [HttpGet("/doctor-login")]
+[AllowAnonymous]
+public IActionResult DoctorLogin(string returnUrl = null)
+{
+    if (this.IsUserAuthenticated())
     {
-        if (this.IsUserAuthenticated())
-        {
-            return this.RedirectToDefault();
-        }
-
-        var model = new RegisterViewModel();
-        return this.View(model);
+        return this.RedirectToDefault();
     }
 
-    [HttpPost("/register")]
-    [ValidateAntiForgeryToken]
-    [AllowAnonymous]
-    public async Task<IActionResult> Register(RegisterViewModel model)
+    ViewData["ReturnUrl"] = returnUrl;
+    var model = new DoctorLoginViewModel();
+    return View(model);
+}
+
+[HttpPost("/doctor-login")]
+[ValidateAntiForgeryToken]
+[AllowAnonymous]
+public async Task<IActionResult> DoctorLogin(DoctorLoginViewModel model, string returnUrl = null)
+{
+    if (this.IsUserAuthenticated())
     {
-        if (this.IsUserAuthenticated())
-        {
-            return this.RedirectToDefault();
-        }
-
-        if (this.ModelState.IsValid)
-        {
-            var result = await this.userManager.CreateAsync(
-                new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                },
-                model.Password!);
-
-            if (result.Succeeded)
-            {
-                this.TempData["MessageText"] = T.RegisterSuccessMessage;
-                this.TempData["MessageVariant"] = "success";
-                return this.RedirectToAction(nameof(this.Login));
-            }
-
-            this.ModelState.AssignIdentityErrors(result.Errors);
-        }
-
-        return this.View(model);
+        return this.RedirectToDefault();
     }
+
+    ViewData["ReturnUrl"] = returnUrl;
+    
+    if (ModelState.IsValid)
+    {
+        var user = await this.userManager.FindByEmailAsync(model.Email!);
+        if (user == null || !(await this.userManager.CheckPasswordAsync(user, model.Password!)))
+        {
+            this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
+            return this.View(model);
+        }
+
+        // Verify the user is a doctor
+        bool isDoctor = await this.userManager.IsInRoleAsync(user, "Doctor");
+        
+        if (!isDoctor)
+        {
+            this.ModelState.AddModelError(string.Empty, "This account doesn't have doctor access. Please use the patient login page if you're a patient.");
+            return this.View(model);
+        }
+        
+        await this.SignInAsync(user, model.RememberMe);
+        this.logger.LogInformation("Doctor {Email} logged in at {Time}.", model.Email, DateTime.UtcNow);
+        
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
+        else
+        {
+            return this.RedirectToAction("Index", "Doctor");
+        }
+    }
+    
+    // If we got this far, something failed, redisplay form
+    return View(model);
+}
+
+[HttpGet("/patient-login")]
+[AllowAnonymous]
+public IActionResult PatientLogin()
+{
+    if (this.IsUserAuthenticated())
+    {
+        return this.RedirectToDefault();
+    }
+
+    var model = new PatientLoginViewModel();
+    return this.View(model);
+}
+
+[HttpPost("/patient-login")]
+[ValidateAntiForgeryToken]
+[AllowAnonymous]
+public async Task<IActionResult> PatientLogin(PatientLoginViewModel model)
+{
+    if (this.IsUserAuthenticated())
+    {
+        return this.RedirectToDefault();
+    }
+
+    if (this.ModelState.IsValid)
+    {
+        var user = await this.userManager.FindByEmailAsync(model.Email!);
+        if (user == null || !(await this.userManager.CheckPasswordAsync(user, model.Password!)))
+        {
+            this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
+            return this.View(model);
+        }
+
+        if (await this.userManager.IsLockedOutAsync(user))
+        {
+            this.ModelState.AddModelError(string.Empty, T.UserLockedOutErrorMessage);
+            return this.View(model);
+        }
+        
+        // Verify the user is a patient
+        bool isPatient = await this.userManager.IsInRoleAsync(user, "Patient");
+        
+
+        await this.SignInAsync(user, model.RememberMe);
+        this.logger.LogInformation("Patient {Email} logged in at {Time}.", model.Email, DateTime.UtcNow);
+
+        return this.RedirectToDefault();
+    }
+
+    return this.View(model);
+}
+
 
     [HttpGet("/forgot-password")]
     [AllowAnonymous]
@@ -237,6 +301,12 @@ public class AuthenticationController : Controller
         }
 
         return this.View(model);
+    }
+
+    [HttpGet("/access-denied")]
+    public IActionResult AccessDenied()
+    {
+        return this.View();
     }
 
     [HttpPost("/logout")]

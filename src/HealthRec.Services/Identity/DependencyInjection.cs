@@ -1,4 +1,5 @@
 using HealthRec.Data;
+using HealthRec.Data.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ internal static class DependencyInjection
                 options.SignIn.RequireConfirmedEmail = false;
                 options.Password.RequiredLength = 6;
             })
-            .AddEntityFrameworkStores<EntityContext>()
+            .AddEntityFrameworkStores<HealthRecDbContext>()
             .AddDefaultTokenProviders();
 
         return services;

@@ -1,4 +1,5 @@
 using HealthRec.Data;
+using HealthRec.Data.Entities;
 using HealthRec.Services.Identity.Constants;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ public static class AppPreparation
         try
         {
             using var scope = app.ApplicationServices.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<EntityContext>();
+            var dbContext = scope.ServiceProvider.GetRequiredService<HealthRecDbContext>();
 
             await dbContext.Database.MigrateAsync();
             
@@ -19,7 +20,7 @@ public static class AppPreparation
                 using var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
                 foreach (var role in DefaultRoles.List)
                 {
-                    await roleManager.CreateAsync(new ApplicationRole
+                    await roleManager.CreateAsync(new ApplicationRole()
                     {
                         Name = role,
                     });

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HealthRec.Data.Migrations
 {
-    [DbContext(typeof(EntityContext))]
-    partial class EntityContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(HealthRecDbContext))]
+    partial class HealthRecDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -22,7 +22,7 @@ namespace HealthRec.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("HealthRec.Data.ApplicationRole", b =>
+            modelBuilder.Entity("ApplicationRole", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,7 +50,7 @@ namespace HealthRec.Data.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("HealthRec.Data.ApplicationUser", b =>
+            modelBuilder.Entity("HealthRec.Data.Entities.ApplicationUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,6 +114,8 @@ namespace HealthRec.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -219,9 +221,30 @@ namespace HealthRec.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("HealthRec.Data.Entities.Doctor", b =>
+                {
+                    b.HasBaseType("HealthRec.Data.Entities.ApplicationUser");
+
+                    b.Property<int>("specialisation")
+                        .HasColumnType("int");
+
+                    b.ToTable("Doctors", (string)null);
+                });
+
+            modelBuilder.Entity("HealthRec.Data.Entities.Patient", b =>
+                {
+                    b.HasBaseType("HealthRec.Data.Entities.ApplicationUser");
+
+                    b.Property<int>("Code")
+                        .HasMaxLength(8)
+                        .HasColumnType("int");
+
+                    b.ToTable("Patients", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("HealthRec.Data.ApplicationRole", null)
+                    b.HasOne("ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -230,7 +253,7 @@ namespace HealthRec.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("HealthRec.Data.ApplicationUser", null)
+                    b.HasOne("HealthRec.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -239,7 +262,7 @@ namespace HealthRec.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("HealthRec.Data.ApplicationUser", null)
+                    b.HasOne("HealthRec.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -248,13 +271,13 @@ namespace HealthRec.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("HealthRec.Data.ApplicationRole", null)
+                    b.HasOne("ApplicationRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HealthRec.Data.ApplicationUser", null)
+                    b.HasOne("HealthRec.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -263,9 +286,27 @@ namespace HealthRec.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("HealthRec.Data.ApplicationUser", null)
+                    b.HasOne("HealthRec.Data.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HealthRec.Data.Entities.Doctor", b =>
+                {
+                    b.HasOne("HealthRec.Data.Entities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("HealthRec.Data.Entities.Doctor", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HealthRec.Data.Entities.Patient", b =>
+                {
+                    b.HasOne("HealthRec.Data.Entities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("HealthRec.Data.Entities.Patient", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
