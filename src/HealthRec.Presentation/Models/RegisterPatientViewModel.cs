@@ -32,8 +32,5 @@ public class RegisterPatientViewModel
     [Display(Name = "Date of Birth")]
     [DataType(DataType.Date)]
     public DateTime DateOfBirth { get; set; }
-    
-    [Required]
-    [Display(Name = "Medical Record Number")]
-    public string MedicalRecordNumber { get; set; }
+
 }

@@ -1,3 +1,5 @@
+@using HealthRec.Common
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model PatientLoginViewModel
 
 @{
@@ -6,49 +8,61 @@
 }
 
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-5">
-            <div class="text-center mb-4">
-                <h2 class="display-6 text-success fw-bold">HEALTH RECORDS SYSTEM</h2>
-            </div>
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+        <div class="text-center mb-4">
+            <h2 class="display-6 text-success fw-bold">HEALTH RECORDS SYSTEM</h2>
+        </div>
             
-            <div class="card shadow border-0 rounded-3">
-                <div class="card-header bg-success text-white text-center py-3">
-                    <h3 class="mb-0 fw-bold"><i class="bi bi-person me-2"></i>Patient Login</h3>
+        <div class="card shadow border-0 rounded-3">
+            <div class="card-header bg-success text-white text-center py-3">
+                <h3 class="mb-0 fw-bold"><i class="bi bi-person me-2"></i>Patient Login</h3>
+            </div>
+            <div class="card-body p-4 p-lg-5">
+                <div class="text-center mb-4">
+                    <div class="bg-success bg-opacity-100 p-3 rounded-circle d-inline-block mb-3">
+                        <i class="bi bi-person-fill fs-1 text-success"></i>
+                    </div>
+                    <h4 class="text-success fw-bold">Patient Portal Access</h4>
                 </div>
-                <div class="card-body p-4 p-lg-5">
-                    <div class="text-center mb-4">
-                        <div class="bg-success bg-opacity-100 p-3 rounded-circle d-inline-block mb-3">
-                            <i class="bi bi-person-fill fs-1 text-success"></i>
-                        </div>
-                        <h4 class="text-success fw-bold">Patient Portal Access</h4>
+
+                <form asp-action="Login" asp-route-userType="Patient" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+
+                    <div class="form-floating mb-3">
+                        <input style="font-size: medium" asp-for="Email" class="form-control form-control-lg" placeholder="Email" autocomplete="username" />
+                        <label style="font-size: medium" asp-for="Email">Email</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
 
-                    <form asp-action="Login" asp-route-userType="Patient" method="post">
-                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-
-                        
-                        <div class="form-floating mb-4">
-                            <input style="font-size: medium" asp-for="Password" class="form-control form-control-lg" placeholder="Enter Code"/>
-                            <label style="font-size: medium" asp-for="Password">Code</label>
-                            <span asp-validation-for="Password" class="text-danger"></span>
-                        </div>
-
-                        
+                    <div class="form-floating mb-4">
+                        <input style="font-size: medium" asp-for="Password" class="form-control form-control-lg" placeholder="Password" autocomplete="current-password" />
+                        <label style="font-size: medium" asp-for="Password">Password</label>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg fw-bold w-100 py-2" style="background-color: #1abc9c; border-color: #1abc9c;">@T.LoginButtonText</button>
+                  
                        
-                    </form>
-                </div>
-                <div class="card-footer bg-light text-center py-3" >
-                    <a asp-action="ForgotPassword" class="text-decoration-none fw-bold fs-6">Forgot your code?</a>
-                    <div class="mt-3">
-                        <a asp-action="Login" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-1"></i>Back to Role Selection
-                        </a>
+                </form>
+            </div>
+            <div class="card-footer bg-light text-center py-3" style="font-size: medium">
+                Don't have an account?
+                <a asp-action="PatientRegister" class="text-decoration-none fw-bold fs-6">Register</a>
+                <div class="mt-3">
+                    <div class="card-footer bg-light text-center py-3">
+                        <a asp-action="ForgotPassword" class="text-decoration-none fw-bold fs-6">Forgot password?</a>
+                        <div class="mt-3">
+                            <a asp-action="Login" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Back to Role Selection
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </div>     
+</div>
 </div>
 
 @section Scripts {

@@ -5,6 +5,7 @@ using Essentials.Extensions;
 using HealthRec.Data.Entities;
 using HealthRec.Presentation.Extensions;
 using HealthRec.Presentation.Models;
+using HealthRec.Services.Authentication.Models;
 using HealthRec.Services.Common.Contracts;
 using HealthRec.Services.Identity.Constants;
 using HealthRec.Services.Identity.Extensions;
@@ -307,6 +308,52 @@ public async Task<IActionResult> PatientLogin(PatientLoginViewModel model)
     public IActionResult AccessDenied()
     {
         return this.View();
+    }
+    
+    [HttpGet("/patient-register")]
+    [AllowAnonymous]
+    public IActionResult PatientRegister()
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        var model = new RegisterPatientViewModel();
+        return this.View(model);
+    }
+
+    [HttpPost("/patient-register")]
+    [ValidateAntiForgeryToken]
+    [AllowAnonymous]
+    public async Task<IActionResult> PatientRegister(RegisterPatientViewModel model)
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        if (this.ModelState.IsValid)
+        {
+            var result = await this.userManager.CreateAsync(
+                new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                },
+                model.Password!);
+
+            if (result.Succeeded)
+            {
+                this.TempData["MessageText"] = T.RegisterSuccessMessage;
+                this.TempData["MessageVariant"] = "success";
+                return this.RedirectToAction(nameof(this.Login));
+            }
+
+            this.ModelState.AssignIdentityErrors(result.Errors);
+        }
+
+        return this.View(model);
     }
 
     [HttpPost("/logout")]
