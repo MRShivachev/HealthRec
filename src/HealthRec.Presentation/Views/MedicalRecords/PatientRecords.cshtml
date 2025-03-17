@@ -1,0 +1,554 @@
+@model HealthRec.Presentation.Models.PatientRecordsViewModel
+
+@{
+    ViewData["Title"] = "My Medical Records";
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --primary-color: #1ed1a8;
+        --primary-hover: #19b997;
+        --dark-blue: #1d3557;
+        --light-bg: #f8f9fa;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --success-color: #28a745;
+    }
+    
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+        font-size: 0.85rem;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        color: var(--dark-blue);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+    
+    .card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+    
+    .patient-info {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+        margin-bottom: 1.5rem;
+    }
+    
+    .patient-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 0.5rem;
+    }
+    
+    .patient-details {
+        font-size: 0.9rem;
+        color: #555;
+    }
+    
+    .record-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+    
+    .record-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .record-card.active {
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .record-date {
+        font-size: 0.8rem;
+        color: #666;
+    }
+    
+    .record-type {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark-blue);
+    }
+    
+    .record-doctor {
+        font-size: 0.8rem;
+        color: #555;
+    }
+    
+    .record-tag {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        display: inline-block;
+        margin-right: 0.3rem;
+    }
+    
+    .tag-diagnosis {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: var(--danger-color);
+    }
+    
+    .tag-test {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #d9a400;
+    }
+    
+    .tag-medication {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--success-color);
+    }
+    
+    .tag-vaccination {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+    }
+    
+    .tag-appointment {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+    
+    .detail-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--dark-blue);
+    }
+    
+    .detail-value {
+        font-size: 0.85rem;
+    }
+    
+    .doctor-info {
+        background-color: var(--light-bg);
+        padding: 0.8rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+    
+    .filter-box {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-control, .form-select {
+        font-size: 0.85rem;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(30, 209, 168, 0.25);
+    }
+    
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        font-size: 0.85rem;
+    }
+    
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+    }
+    
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+        font-size: 0.85rem;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+    }
+    
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    .pagination .page-link {
+        color: var(--primary-color);
+    }
+    
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 1.7rem;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="page-title">My Medical Records</h1>
+        </div>
+    </div>
+
+    <!-- Patient Information Banner -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="patient-info d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="patient-name">@Model.PatientName</div>
+                    <div class="patient-details">
+                        <span class="me-3"><i class="bi bi-calendar3 me-1"></i> Born: @Model.DateOfBirth.ToString("MMMM d, yyyy") (@((int)((DateTime.Now - Model.DateOfBirth).TotalDays / 365.25)) years old)</span>
+                        <span class="me-3"><i class="bi bi-tag me-1"></i> MRN: @Model.MedicalRecordNumber</span>
+                    </div>
+                </div>
+                <div>
+                    <a href="#" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-printer me-1"></i> Print Records
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters and Search -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="filter-box">
+                <form id="filterForm" class="row g-2 align-items-end">
+                    <div class="col-md-3">
+                        <label for="recordType" class="form-label">Record Type</label>
+                        <select id="recordType" class="form-select">
+                            <option value="">All Types</option>
+                            <option value="diagnosis">Diagnoses</option>
+                            <option value="test">Test Results</option>
+                            <option value="medication">Medications</option>
+                            <option value="vaccination">Vaccinations</option>
+                            <option value="appointment">Appointments</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="dateRange" class="form-label">Date Range</label>
+                        <select id="dateRange" class="form-select">
+                            <option value="">All Time</option>
+                            <option value="1">Last Month</option>
+                            <option value="6">Last 6 Months</option>
+                            <option value="12">Last Year</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="doctor" class="form-label">Doctor</label>
+                        <select id="doctor" class="form-select">
+                            <option value="">All Doctors</option>
+                            @foreach (var doctor in Model.Doctors)
+                            {
+                                <option value="@doctor.Id">Dr. @doctor.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="d-flex">
+                            <input type="text" class="form-control me-2" placeholder="Search records...">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Medical Records List -->
+        <div class="col-lg-4">
+            <h2 class="section-title">Records (@Model.Records.Count)</h2>
+            
+            <div class="record-list">
+                @if (Model.Records.Count == 0)
+                {
+                    <div class="empty-state">
+                        <i class="bi bi-clipboard-x empty-state-icon"></i>
+                        <h3 class="h5">No Records Found</h3>
+                        <p class="text-muted">No medical records match your current filters.</p>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var record in Model.Records)
+                    {
+                        <div class="card record-card @(record.Id == Model.Records.First().Id ? "active" : "")" data-record-id="@record.Id">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="record-date">@record.RecordDate.ToString("MMM d, yyyy")</div>
+                                        <div class="record-type">@record.Title</div>
+                                        <div class="record-doctor">Dr. @record.DoctorName</div>
+                                    </div>
+                                    <div>
+                                        @{
+                                            string tagClass = record.RecordType.ToLower() switch
+                                            {
+                                                "diagnosis" => "tag-diagnosis",
+                                                "test" => "tag-test",
+                                                "medication" => "tag-medication",
+                                                "vaccination" => "tag-vaccination",
+                                                "appointment" => "tag-appointment",
+                                                _ => ""
+                                            };
+                                        }
+                                        <span class="record-tag @tagClass">@record.RecordType</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+        
+        <!-- Record Details -->
+        <div class="col-lg-8">
+            <h2 class="section-title">Record Details</h2>
+            
+            <div class="card">
+                <div class="card-body p-4">
+                    @if (Model.Records.Count == 0)
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-file-earmark-text empty-state-icon"></i>
+                            <h3 class="h5">No Record Selected</h3>
+                            <p class="text-muted">Please select a record to view its details.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        var record = Model.Records.First(); // Display first record details by default
+                        
+                        <div id="recordDetails">
+                            <h3 class="h4 mb-3">@record.Title</h3>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <span class="detail-label">Record Type:</span>
+                                        <span class="detail-value">@record.RecordType</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="detail-label">Date:</span>
+                                        <span class="detail-value">@record.RecordDate.ToString("MMMM d, yyyy")</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-2">
+                                        <span class="detail-label">Doctor:</span>
+                                        <span class="detail-value">Dr. @record.DoctorName</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <span class="detail-label">Clinic/Department:</span>
+                                        <span class="detail-value">@record.Department</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(record.Description))
+                            {
+                                <div class="mb-4">
+                                    <h4 class="h6 detail-label">Description:</h4>
+                                    <p>@record.Description</p>
+                                </div>
+                            }
+                            
+                            @if (record.RecordType.ToLower() == "diagnosis")
+                            {
+                                <div class="mb-4">
+                                    <h4 class="h6 detail-label">Diagnosis Code:</h4>
+                                    <p>@record.DiagnosisCode</p>
+                                    
+                                    <h4 class="h6 detail-label">Treatment Plan:</h4>
+                                    <p>@record.TreatmentPlan</p>
+                                </div>
+                            }
+                            
+                            @if (record.RecordType.ToLower() == "test")
+                            {
+                                <div class="mb-4">
+                                    <h4 class="h6 detail-label">Test Results:</h4>
+                                    <p>@record.TestResults</p>
+                                    
+                                    <h4 class="h6 detail-label">Normal Range:</h4>
+                                    <p>@record.NormalRange</p>
+                                </div>
+                            }
+                            
+                            @if (record.RecordType.ToLower() == "medication")
+                            {
+                                <div class="mb-4">
+                                    <h4 class="h6 detail-label">Medication Details:</h4>
+                                    <p>@record.MedicationDetails</p>
+                                    
+                                    <h4 class="h6 detail-label">Dosage:</h4>
+                                    <p>@record.Dosage</p>
+                                    
+                                    <h4 class="h6 detail-label">Instructions:</h4>
+                                    <p>@record.Instructions</p>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(record.Notes))
+                            {
+                                <div class="mb-4">
+                                    <h4 class="h6 detail-label">Additional Notes:</h4>
+                                    <p>@record.Notes</p>
+                                </div>
+                            }
+                            
+                            <div class="doctor-info">
+                                <div class="row">
+                                    <div class="col-md-1">
+                                        <i class="bi bi-person-badge fs-3 text-primary"></i>
+                                    </div>
+                                    <div class="col-md-11">
+                                        <div><strong>Created by Dr. @record.DoctorName</strong></div>
+                                        <div class="small text-muted">
+                                            <span>@record.DoctorSpecialty</span> | 
+                                            <span>Created: @record.CreatedDate.ToString("MMM d, yyyy") at @record.CreatedDate.ToString("h:mm tt")</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle record card clicks
+        const recordCards = document.querySelectorAll('.record-card');
+        
+        recordCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove active class from all cards
+                recordCards.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked card
+                this.classList.add('active');
+                
+                // In a real application, you would load the record details via AJAX
+                // For this example, we'll just show an alert
+                const recordId = this.getAttribute('data-record-id');
+                console.log('Loading details for record: ' + recordId);
+                
+                // In production, you'd make an AJAX call here to load the record details
+                // fetch('/api/records/' + recordId)
+                //   .then(response => response.json())
+                //   .then(data => updateRecordDetails(data));
+            });
+        });
+        
+        // Filter form submission
+        const filterForm = document.getElementById('filterForm');
+        if (filterForm) {
+            filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // In a real application, you would apply the filters via AJAX
+                console.log('Applying filters...');
+                
+                // Example of how to get filter values
+                const recordType = document.getElementById('recordType').value;
+                const dateRange = document.getElementById('dateRange').value;
+                const doctor = document.getElementById('doctor').value;
+                const searchTerm = document.querySelector('input[placeholder="Search records..."]').value;
+                
+                console.log({recordType, dateRange, doctor, searchTerm});
+                
+                // In production, you'd make an AJAX call here to filter the records
+                // fetch('/api/records/filter?recordType=' + recordType + '&dateRange=' + dateRange + '&doctor=' + doctor + '&searchTerm=' + searchTerm)
+                //   .then(response => response.json())
+                //   .then(data => updateRecordsList(data));
+            });
+        }
+    });
+
+    // Helper function to update record details (would be used with AJAX)
+    function updateRecordDetails(record) {
+        // Update the record details section with the data from the server
+        document.getElementById('recordDetails').innerHTML = `
+            <h3 class="h4 mb-3">${record.title}</h3>
+            <!-- Additional record details would be populated here -->
+        `;
+    }
+    
+    // Helper function to update records list (would be used with AJAX)
+    function updateRecordsList(records) {
+        // Update the records list with the filtered data from the server
+        const recordListContainer = document.querySelector('.record-list');
+        // Clear existing records
+        recordListContainer.innerHTML = '';
+        
+        // Add new records based on filter results
+        if (records.length === 0) {
+            recordListContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-clipboard-x empty-state-icon"></i>
+                    <h3 class="h5">No Records Found</h3>
+                    <p class="text-muted">No medical records match your current filters.</p>
+                </div>
+            `;
+        } else {
+            // Loop through records and create cards
+            // ...
+        }
+    }
+</script>
+}

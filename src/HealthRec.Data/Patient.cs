@@ -6,5 +6,5 @@ public class Patient : ApplicationUser
 {
     [Required]
     [StringLength(8)]
-    public int Code {get;set;}
+    public string Code {get;set;}
 }

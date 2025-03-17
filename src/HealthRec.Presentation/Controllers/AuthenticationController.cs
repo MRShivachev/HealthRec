@@ -7,6 +7,7 @@ using HealthRec.Presentation.Extensions;
 using HealthRec.Presentation.Models;
 using HealthRec.Services.Authentication.Models;
 using HealthRec.Services.Common.Contracts;
+using HealthRec.Services.Common.Models;
 using HealthRec.Services.Identity.Constants;
 using HealthRec.Services.Identity.Extensions;
 using Microsoft.AspNetCore.Authentication;
@@ -196,6 +197,81 @@ public async Task<IActionResult> PatientLogin(PatientLoginViewModel model)
     return this.View(model);
 }
 
+[HttpGet("/register-patient")]
+[AllowAnonymous]
+public IActionResult RegisterPatient()
+{
+    if (this.IsUserAuthenticated())
+    {
+        return this.RedirectToDefault();
+    }
+
+    var model = new RegisterPatientViewModel();
+    return this.View(model);
+}
+
+[HttpPost("/register-patient")]
+[ValidateAntiForgeryToken]
+[AllowAnonymous]
+public async Task<IActionResult> RegisterPatient(RegisterPatientViewModel model)
+{
+    if (this.IsUserAuthenticated())
+    {
+        return this.RedirectToDefault();
+    }
+
+    if (this.ModelState.IsValid)
+    {
+        // Check if user already exists
+        var existingUser = await this.userManager.FindByEmailAsync(model.Email);
+        if (existingUser != null)
+        {
+            this.ModelState.AddModelError(string.Empty, "Email is already registered.");
+            return this.View(model);
+        }
+
+        var user = new ApplicationUser
+        {
+            UserName = model.Email,
+            Email = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+        };
+
+        var result = await this.userManager.CreateAsync(user, model.Password);
+
+        if (result.Succeeded)
+        {
+            await this.userManager.AddToRoleAsync(user, "Patient");
+
+            if (model.DateOfBirth != default)
+            {
+                await this.userManager.AddClaimAsync(user, new System.Security.Claims.Claim("DateOfBirth", model.DateOfBirth.ToString("yyyy-MM-dd")));
+            }
+
+            await this.SignInAsync(user, false);
+
+            await this.emailService.SendEmailAsync(new EmailModel
+            {
+                To = user.Email,
+                Subject = "Welcome to HealthRec",
+                Body =
+                    $"Dear {user.FirstName},<br/><br/>Welcome to HealthRec! Your patient account has been successfully created.",
+                Email = null,
+                Message = null
+            });
+
+            this.logger.LogInformation("New patient account created for {Email}", model.Email);
+
+            return this.RedirectToDefault();
+        }
+
+        this.ModelState.AssignIdentityErrors(result.Errors);
+    }
+
+    return this.View(model);
+}
+
 
     [HttpGet("/forgot-password")]
     [AllowAnonymous]
@@ -362,7 +438,9 @@ public async Task<IActionResult> PatientLogin(PatientLoginViewModel model)
         await this.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return this.RedirectToAction(nameof(this.Login));
     }
-
+    
+   
+    
     private async Task SignInAsync(
         ApplicationUser user,
         bool rememberMe)

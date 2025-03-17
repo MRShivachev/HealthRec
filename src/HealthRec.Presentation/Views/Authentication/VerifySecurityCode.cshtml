@@ -1,0 +1,204 @@
+@model HealthRec.Presentation.Models.SecurityCodeViewModel
+
+@{
+    ViewData["Title"] = "Patient Verification";
+    Layout = "_Layout";
+}
+
+<style>
+    :root {
+        --primary-color: #1ed1a8;
+        --primary-hover: #19b997;
+        --dark-blue: #1d3557;
+        --light-bg: #f8f9fa;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+        font-size: 0.85rem;
+        background-color: var(--light-bg);
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .security-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background-color: white;
+    }
+
+    .card-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .header-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(30, 209, 168, 0.25);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+    }
+
+    .security-input {
+        text-align: center;
+        letter-spacing: 0.5rem;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .security-info {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    .circle-step {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        color: white;
+        margin-right: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 1.75rem;
+        }
+
+        .card-header {
+            padding: 1.25rem;
+        }
+
+        .header-icon {
+            font-size: 2rem;
+        }
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center mb-4">
+                <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                    <h1 class="page-title">HEALTH RECORDS SYSTEM</h1>
+                </a>
+            </div>
+
+            <div class="security-card card">
+                <div class="card-header">
+                    <i class="bi bi-shield-lock header-icon"></i>
+                    <h2 class="h3 mb-0">Patient Verification</h2>
+                </div>
+
+                <div class="card-body p-4 p-lg-5">
+                    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @ViewBag.ErrorMessage
+                        </div>
+                    }
+
+                    <p class="mb-4 text-center" style="font-size: large">Please enter your 8-digit security code to access your medical records.</p>
+
+                    <form asp-controller="MedicalRecords" asp-action="VerifySecurityCode" method="post">
+                        <div class="form-group mb-4">
+                            <div class="mb-3">
+                                <input asp-for="SecurityCode" class="form-control form-control-lg security-input"
+                                       maxlength="8" placeholder="XXXXXXXX" inputmode="numeric" pattern="[0-9]{8}" required />
+                                <span asp-validation-for="SecurityCode" class="text-danger"></span>
+                            </div>
+                            <div class="security-info mb-1">
+                                • Your security code is the 8-digit number provided by your healthcare provider
+                            </div>
+                            <div class="security-info mb-1">
+                                • This code verifies your identity and protects your private health information
+                            </div>
+                            <div class="security-info">
+                                • If you don't have a security code, please contact your healthcare provider
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mb-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Access My Records</button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="p-3 bg-light rounded">
+                        <h3 class="h5 mb-3">How to find your security code:</h3>
+                        <p class="mb-2"><span class="circle-step">1</span> Check your recent healthcare correspondence</p>
+                        <p class="mb-2"><span class="circle-step">2</span> Look for a "Security Code" or "Patient Access Code" in your discharge papers</p>
+                        <p class="mb-0"><span class="circle-step">3</span> Call the patient support number on your healthcare card for assistance</p>
+                    </div>
+
+                </div>
+
+                <div class="card-footer bg-light p-3 text-center">
+                    <p class="mb-0 small" style="font-size: small">
+                        <i class="bi bi-shield-check me-1"></i>Your privacy is important to us. All data is encrypted and secure.
+                    </p>
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <a asp-controller="Authentication" asp-action="Login" class="btn btn-sm btn-outline-secondary">
+                    Back to Role Selection
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force numeric input only
+            const securityCodeInput = document.getElementById('@Html.IdFor(m => m.SecurityCode)');
+
+            securityCodeInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+
+                if (this.value.length > 8) {
+                    this.value = this.value.slice(0, 8);
+                }
+            });
+
+            // Auto-submit when 8 digits are entered (optional feature)
+            securityCodeInput.addEventListener('keyup', function(e) {
+                if (this.value.length === 8 && !isNaN(this.value)) {
+                    // Uncomment the line below to enable auto-submit
+                    // this.form.submit();
+                }
+            });
+        });
+    </script>
+}

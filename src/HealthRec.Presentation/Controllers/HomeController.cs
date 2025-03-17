@@ -40,9 +40,27 @@ public class HomeController : Controller
         return this.View(viewModel);
     }
 
+    [HttpGet("/contact-us")]
+    public IActionResult Contacts()
+    {
+        return this.View();
+    }
+    
+    [HttpGet("/About-us")]
+    public IActionResult AboutUs()
+    {
+        return this.View();
+    }
+    
+   
+    
+    
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
     }
+    
+    
 }

@@ -7,9 +7,9 @@ public class ApplicationUser : IdentityUser<Guid>
 {
    [Required]
    [StringLength(50)]
-   string FirstName { get; set; }
+   public string FirstName { get; set; }
    [Required]
    [StringLength(50)]
-   string LastName { get; set; }
+   public string LastName { get; set; }
 }
 

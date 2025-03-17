@@ -17,7 +17,10 @@ public static class EmailServiceExtensions
             {
                 Email = email,
                 Subject = HealthRec.Common.T.ResetPasswordTitle,
-                Message = string.Format(HealthRec.Common.Emails.ResetPassword, token),
+                Message = string.Format(HealthRec.Common.Emails.ResetPassword,
+                    token),
+                To = null,
+                Body = null,
             });
     }
 }
