@@ -53,7 +53,11 @@ public class HomeController : Controller
     }
     
    
-    
+    [HttpGet("/privacy")]
+    public IActionResult Privacy()
+    {
+        return this.View();
+    }
     
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

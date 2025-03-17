@@ -1,6 +1,493 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
+    Layout = "_Layout";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+
+<style>
+    :root {
+        --primary-color: #1ed1a8;
+        --primary-hover: #19b997;
+        --dark-blue: #1d3557;
+        --light-bg: #f8f9fa;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        color: var(--dark-blue);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .privacy-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        height: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .privacy-text {
+        font-size: 0.9rem;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .privacy-icon {
+        background-color: var(--primary-color);
+        color: white;
+        width: 48px;
+        height: 48px;
+        font-size: 1.3rem;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .highlight-box {
+        background-color: rgba(30, 209, 168, 0.1);
+        border-left: 4px solid var(--primary-color);
+        padding: 1rem;
+        margin: 1.5rem 0;
+        border-radius: 0 8px 8px 0;
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+        }
+    }
+
+    :root {
+        --primary-color: #00b893;
+        --secondary-color: #28a745;
+        --dark-blue: #1d3557;
+        --light-blue: #f8f9fa;
+        --text-color: #333;
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-color);
+        background-color: white;
+        overflow-x: hidden;
+    }
+
+    .page-container {
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-section {
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 15px 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .header-links {
+        display: flex;
+        align-items: center;
+    }
+
+    .header-links a {
+        color: var(--dark-blue);
+        text-decoration: none;
+        margin-right: 25px;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .header-links a:hover {
+        color: var(--primary-color);
+    }
+
+    .btn-login {
+        background-color: #00b893;
+        color: white;
+        border-radius: 30px;
+        padding: 8px 25px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px white;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-login:hover {
+        background-color: #00886c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px #00b893;
+        color: white;
+    }
+
+    .hero-section {
+        background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        padding: 0 15px;
+    }
+
+    .hero-title {
+        color: var(--dark-blue);
+        font-weight: 700;
+        margin-bottom: 20px;
+        font-size: 3.5rem;
+    }
+
+    .hero-text {
+        color: #555;
+        font-size: 1.4rem;
+        margin-bottom: 30px;
+    }
+
+    .features-section {
+        padding: 60px 0;
+        background-color: var(--light-blue);
+        width: 100%;
+    }
+
+    .features-title {
+        text-align: center;
+        margin-bottom: 60px;
+        color: var(--dark-blue);
+        font-weight: 600;
+        font-size: 2.5rem;
+    }
+
+    .feature-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        display: inline-block;
+        color: white;
+        padding: 25px;
+        border-radius: 50%;
+    }
+
+    .icon-patient {
+        background-color: #00b893;
+    }
+
+    .icon-appointment {
+        background-color: #00b893;
+    }
+
+    .icon-reports {
+        background-color: #00b893;
+    }
+
+    .feature-title {
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .footer {
+        background-color: #00b893;
+        color: white;
+        padding: 20px 0;
+        margin-top: auto;
+    }
+
+    .footer a {
+        color: #7dd3fc;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .footer a:hover {
+        color: white;
+        text-decoration: underline;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        .hero-text {
+            font-size: 1.2rem;
+        }
+        .features-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+<body>
+<header class="header-section">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="/" class="fs-4 fw-bold" style="color: #00b894; text-decoration: none;">HealthRec</a>
+
+            <div class="d-none d-md-flex header-links">
+                <a asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                <a asp-area="" asp-controller="MedicalRecords" asp-action="VerifySecurityCode">Medical records</a>
+                <a asp-area="" asp-controller="Home" asp-action="AboutUs">About us</a>
+                <a asp-area="" asp-controller="Home" asp-action="Contacts">Contact us</a>
+            </div>
+
+            <a asp-controller="Authentication" asp-action="Login" class="btn-login">
+                Login
+            </a>
+        </div>
+    </div>
+</header>
+<div class="container py-4">
+
+    <h1 class="page-title text-center">Privacy Policy</h1>
+
+    <!-- Overview Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="privacy-card card p-4">
+                <div class="card-body">
+                    <h2 class="section-title">Our Commitment to Your Privacy</h2>
+                    <p class="privacy-text">
+                        At HealthRec, we take the privacy and security of your personal and medical information very seriously. This Privacy Policy outlines how we collect, use, store, and protect your data when you use our healthcare information management system.
+                    </p>
+                    <p class="privacy-text">
+                        We are committed to complying with all applicable healthcare privacy laws and regulations, including HIPAA (Health Insurance Portability and Accountability Act) and other relevant data protection standards. Our privacy practices are designed to provide you with confidence that your sensitive health information is being handled with the utmost care and professionalism.
+                    </p>
+
+                    <div class="highlight-box">
+                        <p class="privacy-text mb-0">
+                            <strong>Effective Date:</strong> March 17, 2025<br>
+                            <strong>Last Updated:</strong> March 17, 2025
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Information Collection & Usage Section -->
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <div class="privacy-card card p-4 h-100">
+                <div class="card-body">
+                    <h2 class="section-title">Information We Collect</h2>
+                    <p class="privacy-text">
+                        When you use HealthRec, we collect several types of information to provide and improve our services:
+                    </p>
+                    <ul class="privacy-text">
+                        <li><strong>Personal Information:</strong> Name, email address, date of birth, contact details, and government-issued identification (when required).</li>
+                        <li><strong>Medical Information:</strong> Health records, diagnoses, treatment plans, medication history, test results, and other health-related data.</li>
+                        <li><strong>Authentication Information:</strong> Username, password (encrypted), security codes, and account recovery details.</li>
+                        <li><strong>Usage Information:</strong> Log data, device information, IP address, browser type, and interaction patterns with our platform.</li>
+                        <li><strong>Healthcare Provider Details:</strong> Professional credentials, specialty information, and facility affiliations (for healthcare professionals).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="privacy-card card p-4 h-100">
+                <div class="card-body">
+                    <h2 class="section-title">How We Use Your Information</h2>
+                    <p class="privacy-text">
+                        We use the collected information for these specific purposes:
+                    </p>
+                    <ul class="privacy-text">
+                        <li><strong>Service Provision:</strong> To operate, maintain, and deliver our healthcare information management services.</li>
+                        <li><strong>Care Coordination:</strong> To enable secure communication and information sharing between you and your healthcare providers.</li>
+                        <li><strong>Account Management:</strong> To authenticate users, process transactions, and provide account-related support.</li>
+                        <li><strong>Service Improvement:</strong> To analyze usage patterns, troubleshoot issues, and enhance our platform's functionality.</li>
+                        <li><strong>Compliance:</strong> To meet regulatory requirements and healthcare industry standards.</li>
+                        <li><strong>Communication:</strong> To send important service updates, security notifications, and requested information.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Sharing & Security Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="privacy-card card p-4">
+                <div class="card-body">
+                    <h2 class="section-title text-center mb-4">Data Protection & Sharing</h2>
+                    <div class="row g-4">
+                        <div class="col-md-4 text-center">
+                            <div class="privacy-icon mx-auto">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <h3 class="h5 mb-2">Data Security</h3>
+                            <p class="privacy-text">We implement advanced encryption, access controls, and regular security audits to protect your health information.</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="privacy-icon mx-auto">
+                                <i class="bi bi-share"></i>
+                            </div>
+                            <h3 class="h5 mb-2">Information Sharing</h3>
+                            <p class="privacy-text">We share your information only with authorized healthcare providers, as directed by you, or as required by law.</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="privacy-icon mx-auto">
+                                <i class="bi bi-person-lock"></i>
+                            </div>
+                            <h3 class="h5 mb-2">Third-Party Access</h3>
+                            <p class="privacy-text">We carefully vet any third-party service providers and ensure they maintain the same high level of security standards.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Your Rights & Choices Section -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto">
+            <div class="privacy-card card p-4">
+                <div class="card-body">
+                    <h2 class="section-title">Your Rights & Choices</h2>
+                    <p class="privacy-text">
+                        As a HealthRec user, you have several rights regarding your personal information:
+                    </p>
+                    <ul class="privacy-text">
+                        <li><strong>Access:</strong> You can request to access your personal and medical information stored in our system.</li>
+                        <li><strong>Correction:</strong> You can request corrections to inaccurate or incomplete information.</li>
+                        <li><strong>Deletion:</strong> Under certain circumstances, you can request the deletion of your data, subject to medical record retention requirements.</li>
+                        <li><strong>Portability:</strong> You can request a copy of your data in a structured, commonly used, and machine-readable format.</li>
+                        <li><strong>Consent Management:</strong> You can modify your consent preferences for specific data processing activities.</li>
+                        <li><strong>User Controls:</strong> You can update your profile information, communication preferences, and privacy settings through your account.</li>
+                    </ul>
+
+                    <div class="highlight-box">
+                        <p class="privacy-text mb-0">
+                            <strong>To Exercise Your Rights:</strong> If you wish to exercise any of these rights, please contact our Privacy Officer at <a href="mailto:privacy@healthrec.com" style="color: var(--primary-color);">privacy@healthrec.com</a> or through the "Privacy Settings" section in your user account.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Information Section -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="privacy-card card p-4 h-100">
+                <div class="card-body">
+                    <h2 class="section-title">Data Retention & Deletion</h2>
+                    <p class="privacy-text">
+                        We retain your information for as long as your account is active or as needed to provide you services. We also retain and use your information as necessary to:
+                    </p>
+                    <ul class="privacy-text">
+                        <li>Comply with our legal obligations, including medical record retention requirements</li>
+                        <li>Resolve disputes</li>
+                        <li>Enforce our agreements</li>
+                        <li>Protect our legal interests</li>
+                    </ul>
+                    <p class="privacy-text">
+                        When we no longer have a legitimate need to process your information, we will delete or anonymize it according to our data retention policies and applicable laws.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="privacy-card card p-4 h-100">
+                <div class="card-body">
+                    <h2 class="section-title">Policy Updates & Contact</h2>
+                    <p class="privacy-text">
+                        We may update this Privacy Policy from time to time to reflect changes in our practices or for legal, operational, or regulatory reasons. We will notify you of any material changes through:
+                    </p>
+                    <ul class="privacy-text">
+                        <li>Email notifications (if you've provided your email address)</li>
+                        <li>Notices on our website or application</li>
+                        <li>Updates in your user dashboard</li>
+                    </ul>
+                    <p class="privacy-text">
+                        If you have questions or concerns about our Privacy Policy or data practices, please contact:
+                    </p>
+                    <p class="privacy-text">
+                        <strong>Privacy Officer</strong><br>
+                        Email: <a href="mailto:privacy@healthrec.com" style="color: var(--primary-color);">privacy@healthrec.com</a><br>
+                        Phone: (555) 123-4567<br>
+                        Address: 123 Medical Avenue, Healthcare District, New York, NY 10001
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple animation for the highlight boxes
+            const highlightBoxes = document.querySelectorAll('.highlight-box');
+
+            highlightBoxes.forEach(box => {
+                box.style.opacity = 0;
+                box.style.transform = 'translateX(-20px)';
+                box.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            });
+
+            setTimeout(() => {
+                highlightBoxes.forEach(box => {
+                    box.style.opacity = 1;
+                    box.style.transform = 'translateX(0)';
+                });
+            }, 300);
+        });
+    </script>
+}
