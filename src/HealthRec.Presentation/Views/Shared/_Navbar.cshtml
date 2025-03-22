@@ -72,12 +72,12 @@
                 }
                 
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="About">
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="AboutUs">
                         <i class="bi bi-info-circle me-1"></i>About
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contact">
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Contacts">
                         <i class="bi bi-envelope me-1"></i>Contact
                     </a>
                 </li>
@@ -177,11 +177,14 @@
                             </li>
                         </ul>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Doctor" asp-action="Index">Doctors</a>
+                    </li>
                 }
                 else
                 {
                     <li class="nav-item me-2">
-                        <a class="btn btn-outline-primary" asp-area="" asp-controller="Account" asp-action="RoleSelection">
+                        <a class="btn btn-outline-primary" asp-area="" asp-controller="Authentication" asp-action="Login">
                             <i class="bi bi-box-arrow-in-right me-1"></i>Log in
                         </a>
                     </li>

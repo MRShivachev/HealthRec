@@ -1,0 +1,81 @@
+@model HealthRec.Presentation.Models.DoctorDetailsViewModel
+
+@{
+    ViewData["Title"] = "Doctor Details";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-controller="Doctor" asp-action="Index">Doctors</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Doctor.Name</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Doctor Profile</h5>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">@Model.Doctor.Name</h4>
+                    <p class="card-text"><strong>Specialty:</strong> @Model.Doctor.Specialty</p>
+                    <p class="card-text"><strong>ID:</strong> @Model.Doctor.Id</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">My Patients</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Patients != null && Model.Patients.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Security Code</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var patient in Model.Patients)
+                                {
+                                    <tr>
+                                        <td>@patient.Id</td>
+                                        <td>@patient.Name</td>
+                                        <td>@patient.Email</td>
+                                        <td>@patient.SecurityCode</td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-info">View Records</a>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            No patients found for this doctor.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

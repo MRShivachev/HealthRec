@@ -64,6 +64,52 @@ public class AuthenticationController : Controller
 
         if (this.ModelState.IsValid)
         {
+            /*var user = await this.userManager.FindByEmailAsync(model.Email!);
+            if (user == null || !(await this.userManager.CheckPasswordAsync(user, model.Password!)))
+            {
+                this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
+                return this.View(model);
+            }
+
+            if (await this.userManager.IsLockedOutAsync(user))
+            {
+                this.ModelState.AddModelError(string.Empty, T.UserLockedOutErrorMessage);
+                return this.View(model);
+            }
+
+            await this.SignInAsync(user, model.RememberMe);
+
+            return this.RedirectToDefault();*/
+        }
+
+        return this.View(model);
+    }
+
+    [HttpGet("/doctor-login")]
+    [AllowAnonymous]
+    public IActionResult DoctorLogin()
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        var model = new DoctorLoginViewModel();
+        return this.View(model);
+    }
+
+    [HttpPost("/doctor-login")]
+    [ValidateAntiForgeryToken]
+    [AllowAnonymous]
+    public async Task<IActionResult> DoctorLogin(DoctorLoginViewModel model)
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        if (this.ModelState.IsValid)
+        {
             var user = await this.userManager.FindByEmailAsync(model.Email!);
             if (user == null || !(await this.userManager.CheckPasswordAsync(user, model.Password!)))
             {
@@ -79,198 +125,139 @@ public class AuthenticationController : Controller
 
             await this.SignInAsync(user, model.RememberMe);
 
+            return this.RedirectToAction("Index", "Doctor");
+        }
+
+        // If we got this far, something failed, redisplay form
+        return this.View(model);
+    }
+
+    [HttpGet("/patient-login")]
+    [AllowAnonymous]
+    public IActionResult PatientLogin()
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        var model = new PatientLoginViewModel();
+        return this.View(model);
+    }
+
+    [HttpPost("/patient-login")]
+    [ValidateAntiForgeryToken]
+    [AllowAnonymous]
+    public async Task<IActionResult> PatientLogin(PatientLoginViewModel model)
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        if (this.ModelState.IsValid)
+        {
+            var user = await this.userManager.FindByEmailAsync(model.Email!);
+            if (user == null || !(await this.userManager.CheckPasswordAsync(user, model.Password!)))
+            {
+                this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
+                return this.View(model);
+            }
+
+            if (await this.userManager.IsLockedOutAsync(user))
+            {
+                this.ModelState.AddModelError(string.Empty, T.UserLockedOutErrorMessage);
+                return this.View(model);
+            }
+
+            // Verify the user is a patient
+            bool isPatient = await this.userManager.IsInRoleAsync(user, "Patient");
+
+
+            await this.SignInAsync(user, model.RememberMe);
+            this.logger.LogInformation("Patient {Email} logged in at {Time}.", model.Email, DateTime.UtcNow);
+
             return this.RedirectToDefault();
         }
 
         return this.View(model);
     }
 
-    [HttpGet("/doctor-login")]
-[AllowAnonymous]
-public IActionResult DoctorLogin(string returnUrl = null)
-{
-    if (this.IsUserAuthenticated())
+    [HttpGet("/register-patient")]
+    [AllowAnonymous]
+    public IActionResult RegisterPatient()
     {
-        return this.RedirectToDefault();
-    }
-
-    ViewData["ReturnUrl"] = returnUrl;
-    var model = new DoctorLoginViewModel();
-    return View(model);
-}
-
-[HttpPost("/doctor-login")]
-[ValidateAntiForgeryToken]
-[AllowAnonymous]
-public async Task<IActionResult> DoctorLogin(DoctorLoginViewModel model, string returnUrl = null)
-{
-    if (this.IsUserAuthenticated())
-    {
-        return this.RedirectToDefault();
-    }
-
-    ViewData["ReturnUrl"] = returnUrl;
-    
-    if (ModelState.IsValid)
-    {
-        var user = await this.userManager.FindByEmailAsync(model.Email!);
-        if (user == null || !(await this.userManager.CheckPasswordAsync(user, model.Password!)))
+        if (this.IsUserAuthenticated())
         {
-            this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
-            return this.View(model);
-        }
-
-        // Verify the user is a doctor
-        bool isDoctor = await this.userManager.IsInRoleAsync(user, "Doctor");
-        
-        if (!isDoctor)
-        {
-            this.ModelState.AddModelError(string.Empty, "This account doesn't have doctor access. Please use the patient login page if you're a patient.");
-            return this.View(model);
-        }
-        
-        await this.SignInAsync(user, model.RememberMe);
-        this.logger.LogInformation("Doctor {Email} logged in at {Time}.", model.Email, DateTime.UtcNow);
-        
-        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-        {
-            return Redirect(returnUrl);
-        }
-        else
-        {
-            return this.RedirectToAction("Index", "Doctor");
-        }
-    }
-    
-    // If we got this far, something failed, redisplay form
-    return View(model);
-}
-
-[HttpGet("/patient-login")]
-[AllowAnonymous]
-public IActionResult PatientLogin()
-{
-    if (this.IsUserAuthenticated())
-    {
-        return this.RedirectToDefault();
-    }
-
-    var model = new PatientLoginViewModel();
-    return this.View(model);
-}
-
-[HttpPost("/patient-login")]
-[ValidateAntiForgeryToken]
-[AllowAnonymous]
-public async Task<IActionResult> PatientLogin(PatientLoginViewModel model)
-{
-    if (this.IsUserAuthenticated())
-    {
-        return this.RedirectToDefault();
-    }
-
-    if (this.ModelState.IsValid)
-    {
-        var user = await this.userManager.FindByEmailAsync(model.Email!);
-        if (user == null || !(await this.userManager.CheckPasswordAsync(user, model.Password!)))
-        {
-            this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
-            return this.View(model);
-        }
-
-        if (await this.userManager.IsLockedOutAsync(user))
-        {
-            this.ModelState.AddModelError(string.Empty, T.UserLockedOutErrorMessage);
-            return this.View(model);
-        }
-        
-        // Verify the user is a patient
-        bool isPatient = await this.userManager.IsInRoleAsync(user, "Patient");
-        
-
-        await this.SignInAsync(user, model.RememberMe);
-        this.logger.LogInformation("Patient {Email} logged in at {Time}.", model.Email, DateTime.UtcNow);
-
-        return this.RedirectToDefault();
-    }
-
-    return this.View(model);
-}
-
-[HttpGet("/register-patient")]
-[AllowAnonymous]
-public IActionResult RegisterPatient()
-{
-    if (this.IsUserAuthenticated())
-    {
-        return this.RedirectToDefault();
-    }
-
-    var model = new RegisterPatientViewModel();
-    return this.View(model);
-}
-
-[HttpPost("/register-patient")]
-[ValidateAntiForgeryToken]
-[AllowAnonymous]
-public async Task<IActionResult> RegisterPatient(RegisterPatientViewModel model)
-{
-    if (this.IsUserAuthenticated())
-    {
-        return this.RedirectToDefault();
-    }
-
-    if (this.ModelState.IsValid)
-    {
-        // Check if user already exists
-        var existingUser = await this.userManager.FindByEmailAsync(model.Email);
-        if (existingUser != null)
-        {
-            this.ModelState.AddModelError(string.Empty, "Email is already registered.");
-            return this.View(model);
-        }
-
-        var user = new ApplicationUser
-        {
-            UserName = model.Email,
-            Email = model.Email,
-            FirstName = model.FirstName,
-            LastName = model.LastName,
-        };
-
-        var result = await this.userManager.CreateAsync(user, model.Password);
-
-        if (result.Succeeded)
-        {
-            await this.userManager.AddToRoleAsync(user, "Patient");
-
-            if (model.DateOfBirth != default)
-            {
-                await this.userManager.AddClaimAsync(user, new System.Security.Claims.Claim("DateOfBirth", model.DateOfBirth.ToString("yyyy-MM-dd")));
-            }
-
-            await this.SignInAsync(user, false);
-
-            await this.emailService.SendEmailAsync(new EmailModel
-            {
-                To = user.Email,
-                Subject = "Welcome to HealthRec",
-                Body =
-                    $"Dear {user.FirstName},<br/><br/>Welcome to HealthRec! Your patient account has been successfully created.",
-                Email = null,
-                Message = null
-            });
-
-            this.logger.LogInformation("New patient account created for {Email}", model.Email);
-
             return this.RedirectToDefault();
         }
 
-        this.ModelState.AssignIdentityErrors(result.Errors);
+        var model = new RegisterPatientViewModel();
+        return this.View(model);
     }
 
-    return this.View(model);
-}
+    [HttpPost("/register-patient")]
+    [ValidateAntiForgeryToken]
+    [AllowAnonymous]
+    public async Task<IActionResult> RegisterPatient(RegisterPatientViewModel model)
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        if (this.ModelState.IsValid)
+        {
+            // Check if user already exists
+            var existingUser = await this.userManager.FindByEmailAsync(model.Email);
+            if (existingUser != null)
+            {
+                this.ModelState.AddModelError(string.Empty, "Email is already registered.");
+                return this.View(model);
+            }
+
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+            };
+
+            var result = await this.userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                await this.userManager.AddToRoleAsync(user, "Patient");
+
+                if (model.DateOfBirth != default)
+                {
+                    await this.userManager.AddClaimAsync(user,
+                        new System.Security.Claims.Claim("DateOfBirth", model.DateOfBirth.ToString("yyyy-MM-dd")));
+                }
+
+                await this.SignInAsync(user, false);
+
+                await this.emailService.SendEmailAsync(new EmailModel
+                {
+                    To = user.Email,
+                    Subject = "Welcome to HealthRec",
+                    Body =
+                        $"Dear {user.FirstName},<br/><br/>Welcome to HealthRec! Your patient account has been successfully created.",
+                    Email = null,
+                    Message = null
+                });
+
+                this.logger.LogInformation("New patient account created for {Email}", model.Email);
+
+                return this.RedirectToDefault();
+            }
+
+            this.ModelState.AssignIdentityErrors(result.Errors);
+        }
+
+        return this.View(model);
+    }
 
 
     [HttpGet("/forgot-password")]
@@ -385,7 +372,7 @@ public async Task<IActionResult> RegisterPatient(RegisterPatientViewModel model)
     {
         return this.View();
     }
-    
+
     [HttpGet("/patient-register")]
     [AllowAnonymous]
     public IActionResult PatientRegister()
@@ -438,9 +425,8 @@ public async Task<IActionResult> RegisterPatient(RegisterPatientViewModel model)
         await this.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return this.RedirectToAction(nameof(this.Login));
     }
-    
-   
-    
+
+
     private async Task SignInAsync(
         ApplicationUser user,
         bool rememberMe)

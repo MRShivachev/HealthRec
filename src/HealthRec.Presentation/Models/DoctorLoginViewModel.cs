@@ -17,7 +17,5 @@ public class DoctorLoginViewModel
         [Display(Name = "Remember me")]
         public bool RememberMe { get; set; }
         
-        public string ReturnUrl { get; set; }
-        
         public string UserType { get; set; } = "Doctor";
 }

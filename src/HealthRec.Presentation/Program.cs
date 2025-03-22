@@ -33,7 +33,7 @@ public class Program
             {
                 policyBuilder.RequireAuthenticatedUser();
                 policyBuilder.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
-                policyBuilder.RequireRole(DefaultRoles.Patient);
+                policyBuilder.RequireRole(DefaultRoles.Admin, DefaultRoles.Doctor);
             });
             options.AddPolicy(DefaultPolicies.PatientPolicy, policyBuilder =>
             {

@@ -35,6 +35,8 @@ public static class AppPreparation
                     UserName = InitialAdminCredentials.AdminEmail,
                     Email = InitialAdminCredentials.AdminEmail,
                     EmailConfirmed = true,
+                    FirstName = "Admin", // Add this
+                    LastName = "User",
                 };
                 var adminCreatedResult = await userManager.CreateAsync(
                     user,
