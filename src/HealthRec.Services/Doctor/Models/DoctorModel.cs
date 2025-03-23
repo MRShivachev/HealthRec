@@ -10,4 +10,5 @@ public class DoctorModel
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public SpecialisationModel Specialisation { get; set; }
+    public string? Password { get; set; }
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace HealthRec.Presentation.Controllers;
 
@@ -86,6 +87,7 @@ public class DoctorController : Controller
 
     [HttpPost("doctors/create")]
     [ValidateAntiForgeryToken]
+    [Authorize(DefaultPolicies.AdminPolicy)]
     public async Task<IActionResult> Create(DoctorCreateViewModel model)
     {
         try
@@ -97,6 +99,7 @@ public class DoctorController : Controller
                 Specialisation = model.Specialisation,
                 Email = model.Email,
                 Phone = model.PhoneNumber,
+                Password = model.Password,
             };
 
             var result = await this.doctorService.CreateDoctorAsync(doctorModel);

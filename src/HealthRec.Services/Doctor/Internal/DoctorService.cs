@@ -1,9 +1,11 @@
+using System.Diagnostics;
 using Essentials.Results;
 using HealthRec.Data;
 using HealthRec.Data.Entities;
 using HealthRec.Services.Doctor.Contract;
 using HealthRec.Services.Doctor.Extensions;
 using HealthRec.Services.Doctor.Model;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -13,13 +15,16 @@ internal class DoctorService : IDoctorService
 {
     private readonly HealthRecDbContext context;
     private readonly ILogger<DoctorService> logger;
+    private readonly UserManager<ApplicationUser> userManager;
 
     public DoctorService(
         HealthRecDbContext context,
-        ILogger<DoctorService> logger)
+        ILogger<DoctorService> logger,
+        UserManager<ApplicationUser> userManager)
     {
         this.context = context;
         this.logger = logger;
+        this.userManager = userManager;
     }
 
     public async Task<IEnumerable<DoctorModel>> GetAllAsync() =>
@@ -41,17 +46,20 @@ internal class DoctorService : IDoctorService
         {
             var doctorEntity = new Data.Entities.Doctor
             {
-                Id = doctor.Id,
                 FirstName = doctor.FirstName,
                 LastName = doctor.LastName,
                 Email = doctor.Email,
-                Specialisation = (Specialisation)doctor.Specialisation,
+                UserName = doctor.FirstName + doctor.LastName,
             };
 
-            this.context.Doctors.Add(doctorEntity);
-            await this.context.SaveChangesAsync();
+            var result = await this.userManager.CreateAsync(doctorEntity, doctor.Password!);
+            await this.userManager.AddToRoleAsync(doctorEntity, "Doctor");
+            if (!result.Succeeded)
+            {
+                return MutationResult.ResultFrom(result.Errors);
+            }
 
-            return MutationResult.ResultFrom(doctorEntity.Id);
+            return MutationResult.ResultFrom(doctorEntity);
         }
         catch (Exception e)
         {
