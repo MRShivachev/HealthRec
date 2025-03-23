@@ -8,8 +8,8 @@ public static class ModelExtensions
         new()
         {
             Id = doctor.Id,
-            FirstName = doctor.FirstName,
-            LastName = doctor.LastName,
+            FirstName = doctor.FirstName!,
+            LastName = doctor.LastName!,
             Email = doctor.Email!,
             Specialisation = (SpecialisationModel)doctor.Specialisation,
         };

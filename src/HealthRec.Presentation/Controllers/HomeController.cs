@@ -29,15 +29,7 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var viewModel = new IndexViewModel
-        {
-            Title = "Index Title",
-            Name = "PEsho",
-        };
-
-        this.ViewBag.Message = "Welcome to HealthRec!!";
-
-        return this.View(viewModel);
+        return this.View();
     }
 
     [HttpGet("/contact-us")]
@@ -45,26 +37,22 @@ public class HomeController : Controller
     {
         return this.View();
     }
-    
+
     [HttpGet("/About-us")]
     public IActionResult AboutUs()
     {
         return this.View();
     }
-    
-   
+
     [HttpGet("/privacy")]
     public IActionResult Privacy()
     {
         return this.View();
     }
-    
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
     }
-    
-    
 }

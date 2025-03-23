@@ -1,23 +1,24 @@
 using System.ComponentModel.DataAnnotations;
+using HealthRec.Services.Doctor.Model;
 
-namespace HealthRec.Services.Authentication.Models;
+namespace HealthRec.Presentation.Models;
 
-public class RegisterDoctorViewModel
+public class DoctorCreateViewModel
 {
-    [Required]
+    [Required(ErrorMessage = "First Name is required")]
     [Display(Name = "First Name")]
     public string? FirstName { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Last Name is required")]
     [Display(Name = "Last Name")]
     public string? LastName { get; set; }
 
-    [Required]
-    [EmailAddress]
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Please enter a valid email address")]
     [Display(Name = "Email")]
     public string? Email { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Password is required")]
     [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
     [DataType(DataType.Password)]
     [Display(Name = "Password")]
@@ -28,7 +29,11 @@ public class RegisterDoctorViewModel
     [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
     public string? ConfirmPassword { get; set; }
 
-    [Required]
-    [Display(Name = "License Number")]
-    public string? LicenseNumber { get; set; }
+    [Required(ErrorMessage = "Specialisation is required")]
+    [Display(Name = "Specialisation")]
+    public SpecialisationModel Specialisation { get; set; }
+
+    [Phone(ErrorMessage = "Please enter a valid phone number")]
+    [Display(Name = "Phone Number")]
+    public string? PhoneNumber { get; set; }
 }

@@ -1,7 +1,7 @@
 using System.Text.Encodings.Web;
 using Azure.Core;
-using HealthRec.Common;
 using Essentials.Extensions;
+using HealthRec.Common;
 using HealthRec.Data.Entities;
 using HealthRec.Presentation.Extensions;
 using HealthRec.Presentation.Models;
@@ -173,7 +173,6 @@ public class AuthenticationController : Controller
             // Verify the user is a patient
             bool isPatient = await this.userManager.IsInRoleAsync(user, "Patient");
 
-
             await this.SignInAsync(user, model.RememberMe);
             this.logger.LogInformation("Patient {Email} logged in at {Time}.", model.Email, DateTime.UtcNow);
 
@@ -209,7 +208,7 @@ public class AuthenticationController : Controller
         if (this.ModelState.IsValid)
         {
             // Check if user already exists
-            var existingUser = await this.userManager.FindByEmailAsync(model.Email);
+            var existingUser = await this.userManager.FindByEmailAsync(model.Email!);
             if (existingUser != null)
             {
                 this.ModelState.AddModelError(string.Empty, "Email is already registered.");
@@ -224,7 +223,7 @@ public class AuthenticationController : Controller
                 LastName = model.LastName,
             };
 
-            var result = await this.userManager.CreateAsync(user, model.Password);
+            var result = await this.userManager.CreateAsync(user, model.Password!);
 
             if (result.Succeeded)
             {
@@ -232,7 +231,8 @@ public class AuthenticationController : Controller
 
                 if (model.DateOfBirth != default)
                 {
-                    await this.userManager.AddClaimAsync(user,
+                    await this.userManager.AddClaimAsync(
+                        user,
                         new System.Security.Claims.Claim("DateOfBirth", model.DateOfBirth.ToString("yyyy-MM-dd")));
                 }
 
@@ -244,8 +244,8 @@ public class AuthenticationController : Controller
                     Subject = "Welcome to HealthRec",
                     Body =
                         $"Dear {user.FirstName},<br/><br/>Welcome to HealthRec! Your patient account has been successfully created.",
-                    Email = null,
-                    Message = null
+                    Email = null!,
+                    Message = null!,
                 });
 
                 this.logger.LogInformation("New patient account created for {Email}", model.Email);
@@ -258,7 +258,6 @@ public class AuthenticationController : Controller
 
         return this.View(model);
     }
-
 
     [HttpGet("/forgot-password")]
     [AllowAnonymous]
@@ -425,7 +424,6 @@ public class AuthenticationController : Controller
         await this.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return this.RedirectToAction(nameof(this.Login));
     }
-
 
     private async Task SignInAsync(
         ApplicationUser user,

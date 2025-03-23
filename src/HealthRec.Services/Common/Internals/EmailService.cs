@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
+using Essentials.Results;
 using HealthRec.Services.Common.Contracts;
 using HealthRec.Services.Common.Models;
-using Essentials.Results;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HealthRec.Services.Common.Internals;

@@ -14,7 +14,7 @@ public static class AppPreparation
             var dbContext = scope.ServiceProvider.GetRequiredService<HealthRecDbContext>();
 
             await dbContext.Database.MigrateAsync();
-            
+
             if (!await dbContext.Roles.AnyAsync())
             {
                 using var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();

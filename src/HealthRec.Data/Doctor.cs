@@ -8,8 +8,8 @@ public enum Specialisation
     Dermatologist = 4,
     Gastroenterologist = 5,
 }
+
 public class Doctor : ApplicationUser
 {
-   public Specialisation Specialisation {get;set;}
-   
+   public Specialisation Specialisation { get; set; }
 }

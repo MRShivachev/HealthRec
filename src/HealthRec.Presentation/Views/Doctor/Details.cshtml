@@ -1,4 +1,4 @@
-@model HealthRec.Presentation.Models.DoctorDetailsViewModel
+@model DoctorDetailsViewModel
 
 @{
     ViewData["Title"] = "Doctor Details";
@@ -12,7 +12,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
                     <li class="breadcrumb-item"><a asp-controller="Doctor" asp-action="Index">Doctors</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Model.Doctor.Name</li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Doctor!.Name</li>
                 </ol>
             </nav>
         </div>
@@ -26,7 +26,7 @@
                 </div>
                 <div class="card-body">
                     <h4 class="card-title">@Model.Doctor.Name</h4>
-                    <p class="card-text"><strong>Specialty:</strong> @Model.Doctor.Specialty</p>
+                    <p class="card-text"><strong>Specialty:</strong> @Model.Doctor.Specialisation</p>
                     <p class="card-text"><strong>ID:</strong> @Model.Doctor.Id</p>
                 </div>
             </div>

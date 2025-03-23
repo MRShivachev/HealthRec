@@ -1,5 +1,7 @@
 using HealthRec.Services.Common;
+using HealthRec.Services.Doctor;
 using HealthRec.Services.Identity;
+using HealthRec.Services.Patient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +15,8 @@ public static class DependencyInjection
     {
         services.AddCommonServices(configuration);
         services.AddIdentityServices();
+        services.AddDoctorServices();
+        services.AddPatientServices();
 
         return services;
     }

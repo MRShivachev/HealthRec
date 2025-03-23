@@ -7,6 +7,6 @@ namespace HealthRec.Presentation.Models
         [Required(ErrorMessage = "Security code is required")]
         [RegularExpression(@"^\d{8}$", ErrorMessage = "Security code must be exactly 8 digits")]
         [Display(Name = "Security Code")]
-        public string SecurityCode { get; set; }
+        public string? SecurityCode { get; set; }
     }
 }

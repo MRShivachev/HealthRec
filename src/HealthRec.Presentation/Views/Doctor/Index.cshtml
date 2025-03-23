@@ -1,4 +1,4 @@
-@model List<HealthRec.Presentation.Models.DoctorViewModel>
+@model DoctorIndexViewModel
 
 @{
     ViewData["Title"] = "Doctors";
@@ -7,7 +7,9 @@
 
 <div class="container mt-4">
     <h1 class="mb-4">Doctors</h1>
-
+    <a asp-controller="Doctor" asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Create Doctor
+    </a>
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0">All Doctors</h5>
@@ -24,14 +26,14 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @if (Model != null && Model.Any())
+                    @if (Model != null && Model.Doctors!.Any())
                     {
-                        @foreach (var doctor in Model)
+                        @foreach (var doctor in Model.Doctors!)
                         {
                             <tr>
                                 <td>@doctor.Id</td>
                                 <td>@doctor.Name</td>
-                                <td>@doctor.Specialty</td>
+                                <td>@doctor.Specialisation</td>
                                 <td>
                                     <a asp-controller="Doctor" asp-action="Details" asp-route-id="@doctor.Id" class="btn btn-sm btn-info">View Details</a>
                                 </td>

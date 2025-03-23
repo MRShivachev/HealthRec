@@ -10,5 +10,4 @@ public interface IDoctorService
     public Task<MutationResult?> UpdateDoctorAsync(Guid id, DoctorModel doctor);
     public Task<MutationResult?> CreateDoctorAsync(DoctorModel doctor);
     public Task<MutationResult?> DeleteDoctorAsync(Guid id);
-
 }

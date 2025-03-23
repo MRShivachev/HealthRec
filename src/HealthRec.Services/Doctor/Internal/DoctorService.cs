@@ -82,7 +82,7 @@ internal class DoctorService : IDoctorService
         }
         catch (Exception e)
         {
-            logger.LogError(e, e.Message);
+            this.logger.LogError(e, e.Message);
             return MutationResult.ResultFrom(null, "Error updating doctor");
         }
     }
@@ -104,7 +104,7 @@ internal class DoctorService : IDoctorService
         }
         catch (Exception e)
         {
-            logger.LogError(e, e.Message);
+            this.logger.LogError(e, e.Message);
             return MutationResult.ResultFrom(null, "Error deleting doctor");
         }
     }

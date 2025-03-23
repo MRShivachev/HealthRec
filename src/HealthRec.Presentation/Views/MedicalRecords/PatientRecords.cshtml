@@ -317,7 +317,7 @@
                                     </div>
                                     <div>
                                         @{
-                                            string tagClass = record.RecordType.ToLower() switch
+                                            string tagClass = record.RecordType!.ToLower() switch
                                             {
                                                 "diagnosis" => "tag-diagnosis",
                                                 "test" => "tag-test",
@@ -404,7 +404,7 @@
                                 </div>
                             }
                             
-                            @if (record.RecordType.ToLower() == "diagnosis")
+                            @if (record.RecordType!.ToLower() == "diagnosis")
                             {
                                 <div class="mb-4">
                                     <h4 class="h6 detail-label">Diagnosis Code:</h4>

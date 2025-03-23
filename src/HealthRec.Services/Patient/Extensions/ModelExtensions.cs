@@ -12,8 +12,6 @@ public static class ModelExtensions
             FirstName = patient.FirstName,
             LastName = patient.LastName,
             Id = patient.Id,
-            Phone = patient.PhoneNumber
-
+            Phone = patient.PhoneNumber,
         };
-
 }

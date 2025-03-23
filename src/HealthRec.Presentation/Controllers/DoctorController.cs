@@ -1,6 +1,9 @@
 using HealthRec.Data;
 using HealthRec.Data.Entities;
 using HealthRec.Presentation.Models;
+using HealthRec.Services.Doctor.Contract;
+using HealthRec.Services.Doctor.Model;
+using HealthRec.Services.Identity.Constants;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,27 +15,55 @@ namespace HealthRec.Presentation.Controllers;
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class DoctorController : Controller
 {
-    private readonly ILogger<DoctorController> _logger;
-    private readonly HealthRecDbContext _context;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly ILogger<DoctorController> logger;
+    private readonly IDoctorService doctorService;
+    private readonly UserManager<ApplicationUser> userManager;
 
     public DoctorController(
         ILogger<DoctorController> logger,
-        HealthRecDbContext context,
+        IDoctorService doctorService,
         UserManager<ApplicationUser> userManager)
     {
-        _logger = logger;
-        _context = context;
-        _userManager = userManager;
+        this.logger = logger;
+        this.doctorService = doctorService;
+        this.userManager = userManager;
     }
 
     // GET: /Doctor/Index
     [HttpGet]
     [Route("doctors")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string q)
     {
+        try
+        {
+            var doctorModels = await this.doctorService.GetAllAsync();
+            var viewModel = new DoctorIndexViewModel
+            {
+                SearchQuery = q,
+            };
 
-        return this.View();
+            var doctorViewModels = new List<DoctorViewModel>();
+            foreach (var doctor in doctorModels)
+            {
+                doctorViewModels.Add(new DoctorViewModel
+                {
+                    Id = doctor.Id,
+                    Name = doctor.FirstName + " " + doctor.LastName,
+                    Specialisation = doctor.Specialisation,
+                    Email = doctor.Email,
+                    Phone = doctor.Phone,
+                });
+            }
+
+            viewModel.Doctors = doctorViewModels;
+
+            return this.View(viewModel);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     // GET: /Doctor/Details/5
@@ -41,37 +72,47 @@ public class DoctorController : Controller
     public async Task<IActionResult> Details(int id)
     {
         // Since we're using the hash code as ID in the view, we need to find the doctor by iterating
-        var allDoctors = await _context.Doctors.ToListAsync();
-        var doctor = allDoctors.FirstOrDefault(d => Math.Abs(d.Id.GetHashCode()) == id);
+        var allDoctors = this.doctorService.GetAllAsync();
 
-        if (doctor == null)
+        return this.View();
+    }
+
+    [HttpGet("doctors/create")]
+    [Authorize(DefaultPolicies.AdminPolicy)]
+    public IActionResult Create()
+    {
+       return this.View(new DoctorCreateViewModel());
+    }
+
+    [HttpPost("doctors/create")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(DoctorCreateViewModel model)
+    {
+        try
         {
-            return NotFound();
+            var doctorModel = new DoctorModel
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Specialisation = model.Specialisation,
+                Email = model.Email,
+                Phone = model.PhoneNumber,
+            };
+
+            var result = await this.doctorService.CreateDoctorAsync(doctorModel);
+            if (result!.Succeeded)
+            {
+                return this.RedirectToAction("Index");
+            }
+
+            this.ModelState.AddModelError(string.Empty, result.Message);
+        }
+        catch (Exception e)
+        {
+            this.logger.LogError(e, e.Message);
+            return this.View(model);
         }
 
-        // Get patients for this doctor (this is a simplified approach - in a real app,
-        // you would likely have a Patient-Doctor relationship table)
-        // For demonstration, we're retrieving all patients
-        var patients = await _context.Patients
-            .ToListAsync();
-
-        var viewModel = new DoctorDetailsViewModel
-        {
-            Doctor = new DoctorViewModel
-            {
-                Id = Math.Abs(doctor.Id.GetHashCode()),
-                Name = $"{doctor.FirstName} {doctor.LastName}",
-                Specialty = doctor.Specialisation.ToString()
-            },
-            Patients = patients.Select(p => new PatientViewModel
-            {
-                Id = Math.Abs(p.Id.GetHashCode()),
-                Name = $"{p.FirstName} {p.LastName}",
-                Email = p.Email,
-                SecurityCode = p.Code
-            }).ToList()
-        };
-
-        return View(viewModel);
+        return this.View(model);
     }
 }

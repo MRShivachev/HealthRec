@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
+using Essentials.Results;
 using HealthRec.Services.Common.Contracts;
 using HealthRec.Services.Common.Models;
 using HealthRec.Services.Common.Options;
-using Essentials.Results;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SendGrid;

@@ -15,13 +15,14 @@ using Microsoft.Extensions.Logging;
 [AllowAnonymous]
 public class MedicalRecordsController : Controller
 {
-    private readonly ILogger<MedicalRecordsController> _logger;
+    private readonly ILogger<MedicalRecordsController> logger;
     private readonly HealthRecDbContext context;
 
-    public MedicalRecordsController(ILogger<MedicalRecordsController> logger,
+    public MedicalRecordsController(
+        ILogger<MedicalRecordsController> logger,
         HealthRecDbContext context)
     {
-        _logger = logger;
+        this.logger = logger;
         this.context = context;
     }
 
@@ -66,8 +67,7 @@ public class MedicalRecordsController : Controller
                     new System.Security.Claims.Claim("PatientId", patient.Id.ToString()),
                 };
             }
-            
-            
+
             // This is a simplified example - in a real app, don't hardcode security codes
             if (model.SecurityCode == "12345678")
             {
@@ -75,8 +75,8 @@ public class MedicalRecordsController : Controller
                 // In a real app, you'd look up the patient details based on the security code
 
                 // Create claims for this patient
-                var patientId = "P12345"; // This would come from your database lookup
-                
+                //var patientId = "P12345"; // This would come from your database lookup
+
 /*
                 // Create claimsPrincipal - in your app, you might use a different approach aligned with SignInAsync
                 var identity = new System.Security.Claims.ClaimsIdentity(claims, "SecurityCode");
@@ -84,7 +84,6 @@ public class MedicalRecordsController : Controller
                 */
 
                 // Sign in the user with a temporary authentication
-                
 
                 // Redirect to the medical records
                 return this.RedirectToAction("PatientRecords");
@@ -116,11 +115,10 @@ public class MedicalRecordsController : Controller
             PatientName = "John Smith",
             DateOfBirth = new DateTime(1985, 5, 15),
             MedicalRecordNumber = "MRN12345",
-            Records = GetSampleMedicalRecords(),
-            Doctors = GetSampleDoctors()
+            Records = this.GetSampleMedicalRecords(),
         };
 
-        return View(viewModel);
+        return this.View(viewModel);
     }
 
     // For authenticated patients to view their own records
@@ -136,11 +134,10 @@ public class MedicalRecordsController : Controller
             PatientName = "John Smith",
             DateOfBirth = new DateTime(1985, 5, 15),
             MedicalRecordNumber = "MRN12345",
-            Records = GetSampleMedicalRecords(),
-            Doctors = GetSampleDoctors()
+            Records = this.GetSampleMedicalRecords(),
         };
 
-        return View(viewModel);
+        return this.View(viewModel);
     }
 
     // For authenticated doctors to view a specific patient's records
@@ -156,11 +153,10 @@ public class MedicalRecordsController : Controller
             PatientName = "John Smith",
             DateOfBirth = new DateTime(1985, 5, 15),
             MedicalRecordNumber = "MRN12345",
-            Records = GetSampleMedicalRecords(),
-            Doctors = GetSampleDoctors()
+            Records = this.GetSampleMedicalRecords(),
         };
 
-        return View("PatientRecords", viewModel); // Reuse the same view
+        return this.View("PatientRecords", viewModel); // Reuse the same view
     }
 
     // Sample data generation methods - in a real app these would be database queries
@@ -179,7 +175,7 @@ public class MedicalRecordsController : Controller
                 DoctorSpecialty = "General Medicine",
                 Department = "Primary Care",
                 CreatedDate = DateTime.Now.AddDays(-30),
-                Notes = "Patient is in good health overall. Recommended to maintain current exercise routine and diet."
+                Notes = "Patient is in good health overall. Recommended to maintain current exercise routine and diet.",
             },
             new MedicalRecordViewModel
             {
@@ -195,7 +191,7 @@ public class MedicalRecordsController : Controller
                 TestResults =
                     "All values within normal range. Cholesterol slightly elevated but not of immediate concern.",
                 NormalRange = "HDL: 40-60 mg/dL, LDL: <100 mg/dL, Total Cholesterol: <200 mg/dL",
-                Notes = "Follow-up in 6 months recommended for cholesterol monitoring."
+                Notes = "Follow-up in 6 months recommended for cholesterol monitoring.",
             },
             new MedicalRecordViewModel
             {
@@ -211,18 +207,8 @@ public class MedicalRecordsController : Controller
                 DiagnosisCode = "I10",
                 TreatmentPlan =
                     "Lifestyle modifications including reduced sodium intake, increased physical activity. Recheck blood pressure in 4 weeks.",
-                Notes = "Patient advised on home blood pressure monitoring techniques."
-            }
-        };
-    }
-
-    private List<DoctorViewModel> GetSampleDoctors()
-    {
-        return new List<DoctorViewModel>
-        {
-            new DoctorViewModel { Id = 1, Name = "Sarah Johnson", Specialty = "General Medicine" },
-            new DoctorViewModel { Id = 2, Name = "Michael Chen", Specialty = "Cardiology" },
-            new DoctorViewModel { Id = 3, Name = "Emily Rodriguez", Specialty = "Family Medicine" }
+                Notes = "Patient advised on home blood pressure monitoring techniques.",
+            },
         };
     }
 }

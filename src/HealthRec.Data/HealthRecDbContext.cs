@@ -6,11 +6,11 @@ namespace HealthRec.Data;
 
 public class HealthRecDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
 {
-    public HealthRecDbContext(DbContextOptions<HealthRecDbContext> options) 
+    public HealthRecDbContext(DbContextOptions<HealthRecDbContext> options)
         : base(options)
     {
-        
     }
+
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Doctor> Doctors { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)

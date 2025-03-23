@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
+using Essentials.Results;
 using HealthRec.Services.Common.Contracts;
 using HealthRec.Services.Common.Models;
-using Essentials.Results;
 
 namespace HealthRec.Services.Identity.Extensions;
 
@@ -17,7 +17,8 @@ public static class EmailServiceExtensions
             {
                 Email = email,
                 Subject = HealthRec.Common.T.ResetPasswordTitle,
-                Message = string.Format(HealthRec.Common.Emails.ResetPassword,
+                Message = string.Format(
+                    HealthRec.Common.Emails.ResetPassword,
                     token),
                 To = null,
                 Body = null,
