@@ -1,4 +1,5 @@
 using HealthRec.Services.Doctor.Model;
+using HealthRec.Services.Doctor.Models;
 
 namespace HealthRec.Services.Doctor.Extensions;
 

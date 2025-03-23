@@ -6,18 +6,6 @@
 }
 
 <div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li class="breadcrumb-item"><a asp-controller="Doctor" asp-action="Index">Doctors</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Model.Doctor!.Name</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
-
     <div class="row">
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
@@ -25,9 +13,9 @@
                     <h5 class="mb-0">Doctor Profile</h5>
                 </div>
                 <div class="card-body">
-                    <h4 class="card-title">@Model.Doctor.Name</h4>
-                    <p class="card-text"><strong>Specialty:</strong> @Model.Doctor.Specialisation</p>
-                    <p class="card-text"><strong>ID:</strong> @Model.Doctor.Id</p>
+                    <h4 class="card-title">@Model.Doctor?.FirstName</h4>
+                    <p class="card-text"><strong>Specialty:</strong> @Model.Doctor?.Specialisation.ToString()</p>
+                    <p class="card-text"><strong>ID:</strong> @Model.Doctor?.Id</p>
                 </div>
             </div>
         </div>

@@ -50,6 +50,7 @@ internal class DoctorService : IDoctorService
                 LastName = doctor.LastName,
                 Email = doctor.Email,
                 UserName = doctor.FirstName + doctor.LastName,
+                Specialisation = (Specialisation)doctor.Specialisation,
             };
 
             var result = await this.userManager.CreateAsync(doctorEntity, doctor.Password!);

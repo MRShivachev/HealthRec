@@ -67,15 +67,21 @@ public class DoctorController : Controller
         }
     }
 
-    // GET: /Doctor/Details/5
-    [HttpGet]
-    [Route("doctor/{id}")]
-    public async Task<IActionResult> Details(int id)
+    [HttpGet("doctors/{id}")]
+    public async Task<IActionResult> Details(Guid id)
     {
-        // Since we're using the hash code as ID in the view, we need to find the doctor by iterating
-        var allDoctors = this.doctorService.GetAllAsync();
+        var doctor = await this.doctorService.GetByIdAsync(id);
+        if (doctor == null)
+        {
+            return this.NotFound();
+        }
 
-        return this.View();
+        var viewModel = new DoctorDetailsViewModel
+        {
+            Doctor = doctor,
+        };
+
+        return this.View(viewModel);
     }
 
     [HttpGet("doctors/create")]

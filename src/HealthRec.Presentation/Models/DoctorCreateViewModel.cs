@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using HealthRec.Services.Doctor.Model;
+using HealthRec.Services.Doctor.Models;
 
 namespace HealthRec.Presentation.Models;
 

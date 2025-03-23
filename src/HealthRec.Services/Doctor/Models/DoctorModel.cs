@@ -1,4 +1,5 @@
 using HealthRec.Data.Entities;
+using HealthRec.Services.Doctor.Models;
 
 namespace HealthRec.Services.Doctor.Model;
 
