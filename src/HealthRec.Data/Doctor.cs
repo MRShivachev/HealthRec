@@ -4,7 +4,7 @@ public enum Specialisation
 {
     Cardiologist = 1,
     Neurologist = 2,
-    Onkologist = 3,
+    Oncologist = 3,
     Dermatologist = 4,
     Gastroenterologist = 5,
 }
@@ -12,4 +12,5 @@ public enum Specialisation
 public class Doctor : ApplicationUser
 {
    public Specialisation Specialisation { get; set; }
+   public ICollection<DoctorPatient>? Patients { get; set; } = new List<DoctorPatient>();
 }

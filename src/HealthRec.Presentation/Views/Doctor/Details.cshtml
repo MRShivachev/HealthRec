@@ -1,4 +1,4 @@
-@model DoctorDetailsViewModel
+@model HealthRec.Presentation.Models.DoctorDetailsViewModel
 
 @{
     ViewData["Title"] = "Doctor Details";
@@ -6,6 +6,14 @@
 }
 
 <div class="container mt-4">
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewBag.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <div class="row">
         <div class="col-md-4">
             <div class="card shadow-sm mb-4">
@@ -13,55 +21,90 @@
                     <h5 class="mb-0">Doctor Profile</h5>
                 </div>
                 <div class="card-body">
-                    <h4 class="card-title">@Model.Doctor?.FirstName</h4>
-                    <p class="card-text"><strong>Specialty:</strong> @Model.Doctor?.Specialisation.ToString()</p>
-                    <p class="card-text"><strong>ID:</strong> @Model.Doctor?.Id</p>
+                    <h4 class="card-title">Dr. @Model.Doctor!.FirstName @Model.Doctor.LastName</h4>
+                    <p class="card-text"><strong>Specialty:</strong> @Model.Doctor.Specialisation</p>
+                    <p class="card-text"><strong>Email:</strong> @Model.Doctor.Email</p>
+                    <p class="card-text"><strong>Phone:</strong> @Model.Doctor.Phone</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">My Patients</h5>
+        <div class="container mt-4">
+            @if (ViewBag.SuccessMessage != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @ViewBag.SuccessMessage
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div class="card-body">
-                    @if (Model.Patients != null && Model.Patients.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Security Code</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var patient in Model.Patients)
-                                {
-                                    <tr>
-                                        <td>@patient.Id</td>
-                                        <td>@patient.Name</td>
-                                        <td>@patient.Email</td>
-                                        <td>@patient.SecurityCode</td>
-                                        <td>
-                                            <a href="#" class="btn btn-sm btn-info">View Records</a>
-                                        </td>
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
+            }
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Doctor Profile</h5>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info">
-                            No patients found for this doctor.
+                        <div class="card-body">
+                            <h4 class="card-title">Dr. @Model.Doctor!.FirstName @Model.Doctor.LastName</h4>
+                            <p class="card-text"><strong>Specialty:</strong> @Model.Doctor.Specialisation</p>
+                            <p class="card-text"><strong>Email:</strong> @Model.Doctor.Email</p>
+                            <p class="card-text"><strong>Phone:</strong> @Model.Doctor.Phone</p>
                         </div>
-                    }
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">My Patients</h5>
+                            <a asp-controller="Patient" asp-action="Create" class="btn btn-light btn-sm">
+                                <i class="bi bi-plus-circle"></i> Add New Patient
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.Patients.Any())
+                            {
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Security Code</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach (var patient in Model.Patients)
+                                        {
+                                            <tr>
+                                                <td>@patient.Name</td>
+                                                <td>@patient.Email</td>
+                                                <td>@patient.PhoneNumber</td>
+                                                <td><span class="badge bg-secondary">@patient.SecurityCode</span></td>
+                                                <td>
+                                                    <a asp-controller="Patient" asp-action="Details" asp-route-id="@patient.Id" class="btn btn-sm btn-info">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <a asp-controller="MedicalRecords" asp-action="PatientRecords" asp-route-patientId="@patient.Id" class="btn btn-sm btn-primary">
+                                                        <i class="bi bi-journal-text"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">
+                                    No patients found for this doctor. <a asp-controller="Patient" asp-action="Create" class="alert-link">Add a patient</a>.
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -4,7 +4,7 @@ namespace HealthRec.Presentation.Models;
 
 public class PatientViewModel
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     [Display(Name = "Name")]
     public string? Name { get; set; }

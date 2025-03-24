@@ -1,0 +1,57 @@
+<div class="col-md-8">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">My Patients</h5>
+            <a asp-controller="Patient" asp-action="Create" class="btn btn-light btn-sm">
+                <i class="bi bi-plus-circle"></i> Add New Patient
+            </a>
+        </div>
+        <div class="card-body">
+            @if (Model.Patients != null && Model.Patients.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Security Code</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var patient in Model.Patients)
+                        {
+                            <tr>
+                                <td>@patient.Name</td>
+                                <td>@patient.Email</td>
+                                <td>@patient.PhoneNumber</td>
+                                <td><span class="badge bg-secondary">@patient.SecurityCode</span></td>
+                                <td>
+                                    <a asp-controller="Patient" asp-action="Details" asp-route-id="@patient.Id"
+                                       class="btn btn-sm btn-info">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-controller="MedicalRecords" asp-action="PatientRecords"
+                                       asp-route-patientId="@patient.Id" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-journal-text"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info">
+                    No patients found for this doctor. <a asp-controller="Patient" asp-action="Create"
+                                                          class="alert-link">Add a patient</a>.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+

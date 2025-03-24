@@ -18,6 +18,7 @@ public static class DependencyInjection
         // Register EmailService
         services.AddScoped<IEmailSender, SendGridSender>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<ISecurityCodeGenerator, SecurityCodeCodeGenerator>();
 
         return services;
     }

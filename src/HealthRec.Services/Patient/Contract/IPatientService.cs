@@ -14,4 +14,12 @@ public interface IPatientService
     public Task<MutationResult> UpdatePatientsAsync(Guid id, PatientModel patient);
 
     public Task<MutationResult> DeletePatientsAsync(Guid id);
+    Task<List<PatientModel>> GetPatientsByDoctorIdAsync(Guid doctorId);
+    Task<MutationResult> CreatePatientWithDoctorAsync(
+        PatientModel patient,
+        string password,
+        DateTime dateOfBirth,
+        Guid assignedDoctorId,
+        Guid currentDoctorId);
+    Task<string> GenerateUniqueSecurityCodeAsync();
 }

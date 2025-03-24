@@ -30,6 +30,7 @@ internal class DoctorService : IDoctorService
     public async Task<IEnumerable<DoctorModel>> GetAllAsync() =>
         await this.context
             .Doctors
+            .Include(x => x.Patients)
             .Select(x => x.ToModel())
             .AsNoTracking()
             .ToListAsync();

@@ -8,4 +8,7 @@ public class PatientModel
     public string? Email { get; set; }
     public string? Phone { get; set; }
     public string? Code { get; set; }
+    public string? Password { get; set; } // Only used during creation
+    public DateTime? DateOfBirth { get; set; }
+    public Guid? AssignedDoctorId { get; set; }
 }

@@ -1,5 +1,6 @@
 using HealthRec.Services.Doctor.Model;
 using HealthRec.Services.Doctor.Models;
+using HealthRec.Services.Patient.Extensions;
 
 namespace HealthRec.Services.Doctor.Extensions;
 
@@ -13,5 +14,18 @@ public static class ModelExtensions
             LastName = doctor.LastName!,
             Email = doctor.Email!,
             Specialisation = (SpecialisationModel)doctor.Specialisation,
+            Patients = doctor.Patients?
+                .Select(dp =>
+                {
+                    if (dp.Patient != null)
+                    {
+                        return dp.Patient.ToModel();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                })
+                .ToList(),
         };
 }
