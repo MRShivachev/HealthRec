@@ -147,7 +147,6 @@ internal class PatientService : IPatientService
 
     public async Task<MutationResult> CreatePatientWithDoctorAsync(
         PatientModel patient,
-        string password,
         DateTime dateOfBirth,
         Guid assignedDoctorId,
         Guid currentDoctorId)
@@ -177,7 +176,7 @@ internal class PatientService : IPatientService
 
         var patientEntity = new Data.Entities.Patient
         {
-            Id = Guid.NewGuid(),
+            Id = patient.Id,
             FirstName = patient.FirstName,
             LastName = patient.LastName,
             Email = patient.Email,
@@ -191,7 +190,6 @@ internal class PatientService : IPatientService
         var result = await this.userManager.CreateAsync(user, password);
         */
         var result = await this.userManager.CreateAsync(patientEntity);
-        await this.userManager.AddToRoleAsync(patientEntity, "Doctor");
 
         if (!result.Succeeded)
         {
@@ -241,5 +239,35 @@ internal class PatientService : IPatientService
     {
         // Use the existing security code generator service
         return this.securityCodeGenerator.GenerateUniqueSecurityCode();
+    }
+
+    public async Task<PatientModel?> AuthenticateBySecurityCodeAsync(string securityCode)
+    {
+        // Validate that the security code is an 8-digit number
+        if (string.IsNullOrEmpty(securityCode) ||
+            securityCode.Length != 8 ||
+            !securityCode.All(char.IsDigit))
+        {
+            this.logger.LogWarning("Invalid security code format attempted");
+            return null;
+        }
+
+        // Find the patient with this security code
+        var patient = await this.context.Patients
+            .FirstOrDefaultAsync(p => p.Code == securityCode);
+
+        if (patient == null)
+        {
+            this.logger.LogWarning("Failed authentication attempt with security code");
+            return null;
+        }
+
+        // Log successful authentication
+        this.logger.LogInformation(
+            "Patient {PatientId} authenticated with security code",
+            patient.Id);
+
+        // Return the patient model
+        return patient.ToModel();
     }
 }

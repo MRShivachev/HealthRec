@@ -150,4 +150,39 @@ public class DoctorController : Controller
 
         return this.View(model);
     }
+
+    [HttpGet("my-patients")]
+    [Authorize(DefaultPolicies.DoctorPolicy)]
+    public async Task<IActionResult> MyPatients()
+    {
+        var doctorId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!Guid.TryParse(doctorId, out var parsedDoctorId))
+        {
+            return this.BadRequest("Invalid doctor ID.");
+        }
+
+        // Fetch patients associated with the doctor through the DoctorPatient table
+        var patients = await this.dbContext.Patients
+            .Where(p => p.Doctors != null && p.Doctors.Any(dp => dp.DoctorId == parsedDoctorId))
+            .ToListAsync();
+
+        // Map the patients to PatientViewModel
+        var patientViewModels = patients.Select(p => new PatientViewModel
+        {
+            Id = p.Id,
+            Name = p.FirstName + " " + p.LastName,
+            Email = p.Email,
+            SecurityCode = p.Code,
+            DateOfBirth = p.DateOfBirth,
+            PhoneNumber = p.PhoneNumber,
+        }).ToList();
+
+        var viewModel = new PatientTableViewModel
+        {
+            Patients = patientViewModels,
+        };
+
+        return this.View("PatientTable", viewModel);
+    }
 }

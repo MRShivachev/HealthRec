@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HealthRec.Presentation.Controllers;
@@ -28,12 +29,14 @@ public class PatientController : Controller
     private readonly HealthRecDbContext dbContext;
     private readonly IEmailService emailService;
     private readonly ILogger<PatientController> logger;
+    private readonly HealthRecDbContext context;
 
     public PatientController(
         IDoctorService doctorService,
         IPatientService patientService,
         UserManager<ApplicationUser> userManager,
         HealthRecDbContext dbContext,
+        HealthRecDbContext context,
         IEmailService emailService,
         ILogger<PatientController> logger)
     {
@@ -41,6 +44,7 @@ public class PatientController : Controller
         this.patientService = patientService;
         this.userManager = userManager;
         this.dbContext = dbContext;
+        this.context = context;
         this.emailService = emailService;
         this.logger = logger;
     }
@@ -79,8 +83,21 @@ public class PatientController : Controller
     {
         if (this.ModelState.IsValid)
         {
-            // Get the current doctor's ID
-            var doctorId = viewModel.AssignedDoctorId;
+            // Get the current user's ID from claims
+            var userId = Guid.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            // Verify this user exists as a Doctor
+            var doctor = await this.context.Doctors.FirstOrDefaultAsync(d => d.Id == userId);
+            if (doctor == null)
+            {
+                this.ModelState.AddModelError(
+                    string.Empty,
+                    "Your account is not properly configured as a doctor. Please contact an administrator.");
+                return this.View(viewModel);
+            }
+
+            // Now we know this is a valid doctor ID
+            var doctorId = doctor.Id;
 
             // Map view model to service model
             var patientModel = new PatientModel
@@ -89,20 +106,19 @@ public class PatientController : Controller
                 LastName = viewModel.LastName,
                 Email = viewModel.Email,
                 Phone = viewModel.PhoneNumber,
-                // Note: ID and Code will be assigned in the service
             };
 
-            // Use service layer to create patient
+            // Use service layer to create patient with the verified doctor ID
             var result = await this.patientService.CreatePatientWithDoctorAsync(
                 patientModel,
-                viewModel.Password!,
                 viewModel.DateOfBirth,
-                viewModel.AssignedDoctorId,
+                doctorId,
                 doctorId);
 
             if (result.Succeeded)
             {
-                return this.RedirectToAction("Details", "Doctor", new { id = viewModel.AssignedDoctorId });
+                this.TempData["SuccessMessage"] = "Patient created successfully.";
+                return this.RedirectToAction("Details", "Doctor", new { id = doctorId });
             }
             else
             {

@@ -17,9 +17,9 @@ public interface IPatientService
     Task<List<PatientModel>> GetPatientsByDoctorIdAsync(Guid doctorId);
     Task<MutationResult> CreatePatientWithDoctorAsync(
         PatientModel patient,
-        string password,
         DateTime dateOfBirth,
         Guid assignedDoctorId,
         Guid currentDoctorId);
     Task<string> GenerateUniqueSecurityCodeAsync();
+    Task<PatientModel?> AuthenticateBySecurityCodeAsync(string securityCode);
 }

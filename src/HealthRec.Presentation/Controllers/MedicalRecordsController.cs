@@ -1,15 +1,17 @@
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using HealthRec.Data;
 using HealthRec.Presentation.Extensions;
 using HealthRec.Presentation.Models;
+using HealthRec.Services.Doctor.Models;
+using HealthRec.Services.Identity.Constants;
+using HealthRec.Services.Patient.Contract;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+
+namespace HealthRec.Presentation.Controllers;
 
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 [AllowAnonymous]
@@ -17,13 +19,16 @@ public class MedicalRecordsController : Controller
 {
     private readonly ILogger<MedicalRecordsController> logger;
     private readonly HealthRecDbContext context;
+    private readonly IPatientService patientService;
 
     public MedicalRecordsController(
         ILogger<MedicalRecordsController> logger,
-        HealthRecDbContext context)
+        HealthRecDbContext context,
+        IPatientService patientService)
     {
         this.logger = logger;
         this.context = context;
+        this.patientService = patientService;
     }
 
     [HttpGet("/security-code")]
@@ -51,74 +56,59 @@ public class MedicalRecordsController : Controller
 
         if (this.ModelState.IsValid)
         {
-            // In a real application, you would:
-            // 1. Look up the security code in your database
-            // 2. Check which patient it belongs to
-            // 3. Create a temporary session or token for that patient
-            var patient = this.context.Patients.FirstOrDefault(x => x.Code == model.SecurityCode);
-            if (patient != null)
+            // Authenticate using the patient service
+            if (model.SecurityCode != null)
             {
-                var claims = new List<System.Security.Claims.Claim>
-                {
-                    new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, patient.Id.ToString()),
-                    new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, "John Smith"),
-                    new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, "Patient"),
-                    new System.Security.Claims.Claim("SecurityCodeAccess", "true"),
-                    new System.Security.Claims.Claim("PatientId", patient.Id.ToString()),
-                };
-            }
+                var patient = await this.patientService.AuthenticateBySecurityCodeAsync(model.SecurityCode);
 
-            // This is a simplified example - in a real app, don't hardcode security codes
-            if (model.SecurityCode == "12345678")
-            {
-                // For demonstration, we're creating a claims identity for the patient
-                // In a real app, you'd look up the patient details based on the security code
+                if (patient == null)
+                {
+                    this.ViewBag.ErrorMessage = "Invalid security code. Please check and try again.";
+                    return this.View(model);
+                }
 
                 // Create claims for this patient
-                //var patientId = "P12345"; // This would come from your database lookup
+                if (patient.Email != null)
+                {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, patient.Id.ToString()),
+                        new Claim(ClaimTypes.Name, $"{patient.FirstName} {patient.LastName}"),
+                        new Claim(ClaimTypes.Email, patient.Email),
+                        new Claim(ClaimTypes.Role, DefaultRoles.Patient),
+                        new Claim("SecurityCodeAccess", "true"),
+                        new Claim("PatientId", patient.Id.ToString()),
+                    };
 
-/*
-                // Create claimsPrincipal - in your app, you might use a different approach aligned with SignInAsync
-                var identity = new System.Security.Claims.ClaimsIdentity(claims, "SecurityCode");
-                var claimsPrincipal = new System.Security.Claims.ClaimsPrincipal(identity);
-                */
+                    // Create the identity and principal
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
 
-                // Sign in the user with a temporary authentication
+                    // Set authentication properties
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = true, // Make the cookie persistent
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24), // Expire after 24 hours
+                    };
 
-                // Redirect to the medical records
-                return this.RedirectToAction("PatientRecords");
+                    // Sign in the user
+                    await this.HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        principal,
+                        authProperties);
+                }
+
+                this.logger.LogInformation(
+                    "Patient {PatientId} logged in with security code at {Time}",
+                    patient.Id,
+                    DateTime.UtcNow);
             }
 
-            this.ModelState.AddModelError(string.Empty, "Invalid security code. Please check and try again.");
+            // Redirect to the home page or patient records
+            return this.RedirectToAction("Index", "Home");
         }
 
         return this.View(model);
-    }
-
-    // Display patient records after security code verification
-    [HttpGet("patient-records")]
-    [AllowAnonymous] // No login required, but security code verified
-    public IActionResult PatientRecords(string securityCode)
-    {
-        // Verify the security code again as a security measure
-        // In a real app, you might use TempData or a more secure method
-        if (string.IsNullOrEmpty(securityCode) || securityCode != "12345678")
-        {
-            return this.RedirectToAction("VerifySecurityCode");
-        }
-
-        // Here you would look up the patient associated with this security code
-        // and retrieve their records
-
-        var viewModel = new PatientRecordsViewModel
-        {
-            PatientName = "John Smith",
-            DateOfBirth = new DateTime(1985, 5, 15),
-            MedicalRecordNumber = "MRN12345",
-            Records = this.GetSampleMedicalRecords(),
-        };
-
-        return this.View(viewModel);
     }
 
     // For authenticated patients to view their own records
@@ -157,6 +147,92 @@ public class MedicalRecordsController : Controller
         };
 
         return this.View("PatientRecords", viewModel); // Reuse the same view
+    }
+
+    // Display patient records after security code verification
+    [HttpGet("patient-records")]
+    [Authorize(Roles = "Patient")] // Ensure only authenticated patients can access
+    public async Task<IActionResult> PatientRecords()
+    {
+        // Get current patient ID from claims
+        var patientIdClaim = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(patientIdClaim) || !Guid.TryParse(patientIdClaim, out var patientId))
+        {
+            return this.RedirectToAction("Login", "Authentication");
+        }
+
+        // Get the patient details
+        var patient = await this.patientService.GetByIdAsync(patientId);
+        if (patient == null)
+        {
+            return this.NotFound();
+        }
+
+        // Get the patient's single doctor
+        var doctorPatient = await this.context.DoctorPatients
+            .FirstOrDefaultAsync(dp => dp.PatientId == patientId);
+
+        DoctorViewModel? doctorViewModel = null;
+
+        if (doctorPatient != null)
+        {
+            var doctor = await this.context.Doctors
+                .FirstOrDefaultAsync(d => d.Id == doctorPatient.DoctorId);
+
+            if (doctor != null)
+            {
+                doctorViewModel = new DoctorViewModel
+                {
+                    Id = doctor.Id,
+                    Name = $"{doctor.FirstName} {doctor.LastName}",
+                    Specialisation = (SpecialisationModel?)doctor.Specialisation,
+                };
+            }
+        }
+
+        // Prepare view model with a single doctor or empty list
+        var viewModel = new PatientRecordsViewModel
+        {
+            PatientName = $"{patient.FirstName} {patient.LastName}",
+            DateOfBirth = (DateTime)patient.DateOfBirth!,
+            MedicalRecordNumber = $"MRN-{patientId.ToString().Substring(0, 8)}",
+            Records = this.GetSampleMedicalRecords(), // In a real app, get actual records
+            Doctors = doctorViewModel != null
+                ? new List<DoctorViewModel> { doctorViewModel }
+                : new List<DoctorViewModel>(),
+        };
+
+        return this.View(viewModel);
+    }
+
+    private async Task<List<DoctorViewModel>> GetPatientDoctor(Guid patientId)
+    {
+        // Get the doctor associated with this patient
+        var doctorPatient = await this.context.DoctorPatients
+            .FirstOrDefaultAsync(dp => dp.PatientId == patientId);
+
+        if (doctorPatient == null)
+        {
+            return new List<DoctorViewModel>();
+        }
+
+        var doctor = await this.context.Doctors
+            .FirstOrDefaultAsync(d => d.Id == doctorPatient.DoctorId);
+
+        if (doctor == null)
+        {
+            return new List<DoctorViewModel>();
+        }
+
+        return new List<DoctorViewModel>
+        {
+            new DoctorViewModel
+            {
+                Id = doctor.Id,
+                Name = $"{doctor.FirstName} {doctor.LastName}",
+                Specialisation = (SpecialisationModel?)doctor.Specialisation,
+            },
+        };
     }
 
     // Sample data generation methods - in a real app these would be database queries
