@@ -1,8 +1,13 @@
 @using Microsoft.AspNetCore.Identity
 @using HealthRec.Data.Entities
+@using HealthRec.Services.Identity.Contracts
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
+@inject ICurrentUser currentUser
 
+@{
+    bool isAuthenticated = Context?.User?.Identity?.IsAuthenticated == true;
+}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
     <div class="container">
@@ -24,7 +29,7 @@
                     </a>
                 </li>
 
-                @if (SignInManager.IsSignedIn(User))
+                @if (isAuthenticated)
                 {
                     @if (User.IsInRole("Doctor"))
                     {
@@ -42,7 +47,7 @@
                     else if (User.IsInRole("Patient"))
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="MedicalRecords" asp-action="PatientRecords">
+                            <a class="nav-link" asp-controller="MedicalRecords" asp-action="PatientRecords" asp-route-patientId="@currentUser.UserId">
                                 <i class="bi bi-file-medical me-1"></i>My Records
                             </a>
                         </li>
@@ -80,7 +85,7 @@
             </ul>
 
             <ul class="navbar-nav ms-auto d-flex align-items-center">
-                @if (SignInManager.IsSignedIn(User))
+                @if (isAuthenticated)
                 {
                     var user = await UserManager.GetUserAsync(User);
 

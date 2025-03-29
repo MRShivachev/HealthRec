@@ -8,5 +8,7 @@ namespace HealthRec.Presentation.Models
         [RegularExpression(@"^\d{8}$", ErrorMessage = "Security code must be exactly 8 digits")]
         [Display(Name = "Security Code")]
         public string? SecurityCode { get; set; }
+
+        public bool RememberMe { get; set; }
     }
 }

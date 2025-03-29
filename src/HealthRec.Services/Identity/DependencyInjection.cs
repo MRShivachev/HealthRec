@@ -1,5 +1,7 @@
 using HealthRec.Data;
 using HealthRec.Data.Entities;
+using HealthRec.Services.Identity.Contracts;
+using HealthRec.Services.Identity.Internals;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,6 +22,7 @@ internal static class DependencyInjection
             })
             .AddEntityFrameworkStores<HealthRecDbContext>()
             .AddDefaultTokenProviders();
+        services.AddScoped<ICurrentUser, CurrentUser>();
 
         return services;
     }

@@ -1,5 +1,7 @@
 using System.Security.Claims;
+using HealthRec.Common;
 using HealthRec.Data;
+using HealthRec.Data.Entities;
 using HealthRec.Presentation.Extensions;
 using HealthRec.Presentation.Models;
 using HealthRec.Services.Doctor.Models;
@@ -8,27 +10,35 @@ using HealthRec.Services.Patient.Contract;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace HealthRec.Presentation.Controllers;
 
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+[Route("medical-records")]
 [AllowAnonymous]
 public class MedicalRecordsController : Controller
 {
     private readonly ILogger<MedicalRecordsController> logger;
     private readonly HealthRecDbContext context;
     private readonly IPatientService patientService;
+    private readonly UserManager<ApplicationUser> userManager;
+    private readonly SignInManager<ApplicationUser> signInManager;
 
     public MedicalRecordsController(
         ILogger<MedicalRecordsController> logger,
         HealthRecDbContext context,
-        IPatientService patientService)
+        IPatientService patientService,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager)
     {
         this.logger = logger;
         this.context = context;
         this.patientService = patientService;
+        this.userManager = userManager;
+        this.signInManager = signInManager;
     }
 
     [HttpGet("/security-code")]
@@ -67,45 +77,26 @@ public class MedicalRecordsController : Controller
                     return this.View(model);
                 }
 
-                // Create claims for this patient
-                if (patient.Email != null)
+                var user = await this.userManager.FindByEmailAsync(patient.Email!);
+                if (user == null)
                 {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, patient.Id.ToString()),
-                        new Claim(ClaimTypes.Name, $"{patient.FirstName} {patient.LastName}"),
-                        new Claim(ClaimTypes.Email, patient.Email),
-                        new Claim(ClaimTypes.Role, DefaultRoles.Patient),
-                        new Claim("SecurityCodeAccess", "true"),
-                        new Claim("PatientId", patient.Id.ToString()),
-                    };
-
-                    // Create the identity and principal
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var principal = new ClaimsPrincipal(identity);
-
-                    // Set authentication properties
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = true, // Make the cookie persistent
-                        ExpiresUtc = DateTimeOffset.UtcNow.AddHours(24), // Expire after 24 hours
-                    };
-
-                    // Sign in the user
-                    await this.HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        principal,
-                        authProperties);
+                    this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
+                    return this.View(model);
                 }
 
-                this.logger.LogInformation(
-                    "Patient {PatientId} logged in with security code at {Time}",
-                    patient.Id,
-                    DateTime.UtcNow);
+                // Create claims for this patient
+                if (await this.userManager.IsLockedOutAsync(user))
+                {
+                    this.ModelState.AddModelError(string.Empty, T.UserLockedOutErrorMessage);
+                    return this.View(model);
+                }
+
+                await this.SignInAsync(user, model.RememberMe);
+                return this.RedirectToDefault();
             }
 
             // Redirect to the home page or patient records
-            return this.RedirectToAction("Index", "Home");
+            return this.RedirectToDefault();
         }
 
         return this.View(model);
@@ -151,16 +142,9 @@ public class MedicalRecordsController : Controller
 
     // Display patient records after security code verification
     [HttpGet("patient-records")]
-    [Authorize(Roles = "Patient")] // Ensure only authenticated patients can access
-    public async Task<IActionResult> PatientRecords()
+    [Authorize(DefaultPolicies.PatientPolicy)] // Ensure only authenticated patients can access
+    public async Task<IActionResult> PatientRecords(Guid patientId)
     {
-        // Get current patient ID from claims
-        var patientIdClaim = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(patientIdClaim) || !Guid.TryParse(patientIdClaim, out var patientId))
-        {
-            return this.RedirectToAction("Login", "Authentication");
-        }
-
         // Get the patient details
         var patient = await this.patientService.GetByIdAsync(patientId);
         if (patient == null)
@@ -202,7 +186,7 @@ public class MedicalRecordsController : Controller
                 : new List<DoctorViewModel>(),
         };
 
-        return this.View(viewModel);
+        return this.View("PatientRecords", new PatientRecordsViewModel());
     }
 
     private async Task<List<DoctorViewModel>> GetPatientDoctor(Guid patientId)
@@ -286,5 +270,23 @@ public class MedicalRecordsController : Controller
                 Notes = "Patient advised on home blood pressure monitoring techniques.",
             },
         };
+    }
+
+    private async Task SignInAsync(
+        ApplicationUser user,
+        bool rememberMe)
+    {
+        var claimsPrinciple = await this.signInManager
+            .ClaimsFactory
+            .CreateAsync(user);
+
+        await this.HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            claimsPrinciple,
+            new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
+                IsPersistent = rememberMe,
+            });
     }
 }

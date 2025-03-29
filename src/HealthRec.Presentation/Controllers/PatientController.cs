@@ -86,18 +86,8 @@ public class PatientController : Controller
             // Get the current user's ID from claims
             var userId = Guid.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-            // Verify this user exists as a Doctor
-            var doctor = await this.context.Doctors.FirstOrDefaultAsync(d => d.Id == userId);
-            if (doctor == null)
-            {
-                this.ModelState.AddModelError(
-                    string.Empty,
-                    "Your account is not properly configured as a doctor. Please contact an administrator.");
-                return this.View(viewModel);
-            }
-
             // Now we know this is a valid doctor ID
-            var doctorId = doctor.Id;
+            var doctorId = viewModel.AssignedDoctorId;
 
             // Map view model to service model
             var patientModel = new PatientModel

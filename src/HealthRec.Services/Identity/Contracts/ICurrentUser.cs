@@ -1,5 +1,7 @@
 namespace HealthRec.Services.Identity.Contracts;
 
-public class ICurrentUser
+public interface ICurrentUser
 {
+    Guid? UserId { get; }
+    bool Exists { get; }
 }
