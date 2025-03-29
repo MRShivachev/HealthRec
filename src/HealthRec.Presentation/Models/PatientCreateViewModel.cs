@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using HealthRec.Services.Doctor.Model;
 
 namespace HealthRec.Presentation.Models;
 
@@ -29,8 +30,6 @@ public class PatientCreateViewModel
     [Display(Name = "Phone Number")]
     public string? PhoneNumber { get; set; }
 
-    [Required(ErrorMessage = "Please select a doctor")]
-    [Display(Name = "Assign Doctor")]
     public Guid AssignedDoctorId { get; set; }
 
     public List<DoctorDropdownViewModel> AvailableDoctors { get; set; } = new List<DoctorDropdownViewModel>();

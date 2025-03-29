@@ -148,8 +148,7 @@ internal class PatientService : IPatientService
     public async Task<MutationResult> CreatePatientWithDoctorAsync(
         PatientModel patient,
         DateTime dateOfBirth,
-        Guid assignedDoctorId,
-        Guid currentDoctorId)
+        Guid assignedDoctorId)
     {
         // Check if email already exists
         var existingUser = await this.userManager.FindByEmailAsync(patient.Email!);

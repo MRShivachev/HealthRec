@@ -7,6 +7,7 @@ using HealthRec.Data.Entities;
 using HealthRec.Presentation.Models;
 using HealthRec.Services.Common.Contracts;
 using HealthRec.Services.Doctor.Contract;
+using HealthRec.Services.Doctor.Model;
 using HealthRec.Services.Identity.Constants;
 using HealthRec.Services.Patient.Contract;
 using HealthRec.Services.Patient.Models;
@@ -59,7 +60,7 @@ public class PatientController : Controller
 
     [HttpGet("create")]
     [Authorize(DefaultPolicies.DoctorPolicy)]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(Guid id)
     {
         var doctors = await this.doctorService.GetAllAsync();
 
@@ -71,6 +72,8 @@ public class PatientController : Controller
                 Name = $"{d.FirstName} {d.LastName}",
                 Specialty = d.Specialisation.ToString(),
             }).ToList(),
+
+            AssignedDoctorId = id,
         };
 
         return this.View(viewModel);
@@ -102,7 +105,6 @@ public class PatientController : Controller
             var result = await this.patientService.CreatePatientWithDoctorAsync(
                 patientModel,
                 viewModel.DateOfBirth,
-                doctorId,
                 doctorId);
 
             if (result.Succeeded)

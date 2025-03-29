@@ -1,4 +1,5 @@
 using Essentials.Results;
+using HealthRec.Services.Doctor.Model;
 using HealthRec.Services.Patient.Models;
 
 namespace HealthRec.Services.Patient.Contract;
@@ -18,8 +19,7 @@ public interface IPatientService
     Task<MutationResult> CreatePatientWithDoctorAsync(
         PatientModel patient,
         DateTime dateOfBirth,
-        Guid assignedDoctorId,
-        Guid currentDoctorId);
+        Guid assignedDoctorId);
     Task<string> GenerateUniqueSecurityCodeAsync();
     Task<PatientModel?> AuthenticateBySecurityCodeAsync(string securityCode);
 }
