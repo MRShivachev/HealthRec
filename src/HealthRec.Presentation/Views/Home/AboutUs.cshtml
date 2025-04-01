@@ -5,10 +5,18 @@
 
 <style>
     :root {
-        --primary-color: #1ed1a8;
         --primary-hover: #19b997;
         --dark-blue: #1d3557;
         --light-bg: #f8f9fa;
+        --primary-color: #00bf9c;
+        --primary-dark: #009e82;
+        --secondary-color: #2c3e50;
+        --light-gray: #f8f9fa;
+        --white: #fff;
+        --text-dark: #212529;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --border-radius: 0.5rem;
+        scrollbar-width: none;
     }
 
     body {
@@ -139,7 +147,6 @@
     }
     :root {
         --primary-color: #00b893;
-        --secondary-color: #28a745;
         --dark-blue: #1d3557;
         --light-blue: #f8f9fa;
         --text-color: #333;
@@ -320,7 +327,37 @@
         color: white;
         text-decoration: underline;
     }
+    footer {
+        background-color: var(--secondary-color);
+        color: var(--white);
+        padding: 3rem 0 2rem;
+    }
 
+    .footer-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .footer-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+        color: var(--primary-color);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        margin-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.6);
+    }
     @@media (max-width: 768px) {
         .hero-title {
             font-size: 2.5rem;

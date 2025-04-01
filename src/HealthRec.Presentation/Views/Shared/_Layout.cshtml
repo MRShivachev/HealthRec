@@ -17,14 +17,36 @@
     </main>
 </div>
 
-<footer class="border-top footer text-muted" style="text-align: center;">
-    <div style="color: white">
-        &copy; 2025 HealthRec - <a asp-area="" asp-controller="Home" asp-action="Privacy" style="color: #c1ffd9">Privacy</a>
-    </div>
-</footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h4 class="footer-title">HealthRec</h4>
+                <p>Secure and efficient healthcare information management system designed to streamline patient care and improve healthcare outcomes.</p>
+            </div>
+            <div class="col-md-3 mb-4">
+                <h4 class="footer-title">Quick Links</h4>
+                <a href="#" class="footer-link">Home</a>
+                <a href="#" class="footer-link">About Us</a>
+                <a href="#" class="footer-link">Services</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+            </div>
+            <div class="col-md-5 mb-4">
+                <h4 class="footer-title">Contact Us</h4>
+                <p><i class="bi bi-geo-alt me-2"></i> 123 Medical Avenue, Healthcare District, NY 10001</p>
+                <p><i class="bi bi-telephone me-2"></i> (555) 123-4567</p>
+                <p><i class="bi bi-envelope me-2"></i> info@healthrec.com</p>
+            </div>
+        </div>
+        <div>
+            <p>&copy; 2025 HealthRec. <a asp-area="" asp-controller="Home" asp-action="Privacy" style="color: #c1ffd9">Privacy</a></p>
+        </div>
+    </div>
+</footer>
 </html>
