@@ -4,6 +4,7 @@ using HealthRec.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthRec.Data.Migrations
 {
     [DbContext(typeof(HealthRecDbContext))]
-    partial class HealthRecDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250403141750_Records")]
+    partial class Records
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,8 +187,6 @@ namespace HealthRec.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PatientId");
-
                     b.ToTable("Records");
                 });
 
@@ -336,17 +337,6 @@ namespace HealthRec.Data.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("HealthRec.Data.Record", b =>
-                {
-                    b.HasOne("HealthRec.Data.Entities.Patient", "Patient")
-                        .WithMany("Records")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("ApplicationRole", null)
@@ -424,8 +414,6 @@ namespace HealthRec.Data.Migrations
             modelBuilder.Entity("HealthRec.Data.Entities.Patient", b =>
                 {
                     b.Navigation("Doctors");
-
-                    b.Navigation("Records");
                 });
 #pragma warning restore 612, 618
         }

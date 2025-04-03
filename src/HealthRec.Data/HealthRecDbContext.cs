@@ -14,7 +14,7 @@ public class HealthRecDbContext : IdentityDbContext<ApplicationUser, Application
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<DoctorPatient> DoctorPatients { get; set; } // Changed to plural to match table name
-
+    public DbSet<Record> Records { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

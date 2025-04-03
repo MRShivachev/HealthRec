@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.Intrinsics.Arm;
 using Essentials.Results;
 using HealthRec.Data;
 using HealthRec.Data.Entities;
@@ -116,6 +117,19 @@ internal class DoctorService : IDoctorService
         {
             this.logger.LogError(e, e.Message);
             return MutationResult.ResultFrom(null, "Error deleting doctor");
+        }
+    }
+
+    public async Task<bool> IsDoctorForPatientAsync(Guid patientId, Guid userId)
+    {
+        try
+        {
+            return await this.context.DoctorPatients.AnyAsync(dp => dp.PatientId == patientId && dp.DoctorId == userId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
     }
 }
