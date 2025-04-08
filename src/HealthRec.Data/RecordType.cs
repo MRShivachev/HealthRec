@@ -2,8 +2,8 @@ namespace HealthRec.Data;
 
 public enum RecordType
 {
-    Diagnose = 1,
-    TestResult = 2,
-    Medication = 3,
-    Vaccination = 4,
+    Диагноза = 1,
+    Резултат = 2,
+    Лекарства = 3,
+    Ваксинцаия = 4,
 }

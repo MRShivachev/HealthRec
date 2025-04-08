@@ -2,15 +2,19 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HealthRec.Common;
 using HealthRec.Data;
 using HealthRec.Data.Entities;
+using HealthRec.Presentation.Extensions;
 using HealthRec.Presentation.Models;
 using HealthRec.Services.Common.Contracts;
 using HealthRec.Services.Doctor.Contract;
 using HealthRec.Services.Doctor.Model;
+using HealthRec.Services.Doctor.Models;
 using HealthRec.Services.Identity.Constants;
 using HealthRec.Services.Patient.Contract;
 using HealthRec.Services.Patient.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -31,6 +35,7 @@ public class PatientController : Controller
     private readonly IEmailService emailService;
     private readonly ILogger<PatientController> logger;
     private readonly HealthRecDbContext context;
+    private readonly SignInManager<ApplicationUser> signInManager;
 
     public PatientController(
         IDoctorService doctorService,
@@ -39,7 +44,8 @@ public class PatientController : Controller
         HealthRecDbContext dbContext,
         HealthRecDbContext context,
         IEmailService emailService,
-        ILogger<PatientController> logger)
+        ILogger<PatientController> logger,
+        SignInManager<ApplicationUser> signInManager)
     {
         this.doctorService = doctorService;
         this.patientService = patientService;
@@ -48,14 +54,14 @@ public class PatientController : Controller
         this.context = context;
         this.emailService = emailService;
         this.logger = logger;
+        this.signInManager = signInManager;
     }
 
     [HttpGet("index")]
     [Authorize(DefaultPolicies.DoctorPolicy)]
     public async Task<IActionResult> Index()
     {
-        var patients = await this.patientService.GetAllAsync();
-        return this.View(patients);
+        return this.RedirectToAction("MyPatients", "Doctor");
     }
 
     [HttpGet("create")]
@@ -86,9 +92,6 @@ public class PatientController : Controller
     {
         if (this.ModelState.IsValid)
         {
-            // Get the current user's ID from claims
-            var userId = Guid.Parse(this.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
             // Now we know this is a valid doctor ID
             var doctorId = viewModel.AssignedDoctorId;
 
@@ -141,5 +144,159 @@ public class PatientController : Controller
         }
 
         return this.View(patient);
+    }
+
+    [HttpPost("delete/{id}")]
+    [Authorize(DefaultPolicies.DoctorPolicy)]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        try
+        {
+            var patient = await this.patientService.GetByIdAsync(id);
+            if (patient == null)
+            {
+                return this.NotFound();
+            }
+
+            var result = await this.patientService.DeletePatientsAsync(id);
+
+            if (result.Succeeded)
+            {
+                this.TempData["SuccessMessage"] = $"Patient {patient.FirstName} {patient.LastName} was successfully deleted.";
+            }
+
+            // Redirect to the correct view name or action
+            // Option 1: If you have another action that shows the patient list
+            return this.RedirectToAction("MyPatients", "Doctor"); // Change this to the correct action name
+
+            // Option 2: If you want to go back to the doctor's details page that shows patients
+            // return this.RedirectToAction("Details", "Doctor", new { id = doctorId });
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, "Error occurred while deleting patient with ID: {PatientId}", id);
+            this.TempData["ErrorMessage"] = "An error occurred while deleting the patient.";
+
+            // Also redirect to the correct view here
+            return this.RedirectToAction("Index"); // Change this to the correct action name
+        }
+    }
+
+    [HttpGet("/security-code")]
+    [AllowAnonymous]
+    public IActionResult VerifySecurityCode()
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        var model = new SecurityCodeViewModel();
+        return this.View(model);
+    }
+
+    [HttpPost("/security-code")]
+    [ValidateAntiForgeryToken]
+    [AllowAnonymous]
+    public async Task<IActionResult> VerifySecurityCode(SecurityCodeViewModel model)
+    {
+        if (this.IsUserAuthenticated())
+        {
+            return this.RedirectToDefault();
+        }
+
+        if (this.ModelState.IsValid)
+        {
+            // Authenticate using the patient service
+            if (model.SecurityCode != null)
+            {
+                var patient = await this.patientService.AuthenticateBySecurityCodeAsync(model.SecurityCode);
+
+                if (patient == null)
+                {
+                    this.ViewBag.ErrorMessage = "Invalid security code. Please check and try again.";
+                    return this.View(model);
+                }
+
+                var user = await this.userManager.FindByEmailAsync(patient.Email!);
+                if (user == null)
+                {
+                    this.ModelState.AddModelError(string.Empty, T.InvalidLoginErrorMessage);
+                    return this.View(model);
+                }
+
+                // Create claims for this patient
+                if (await this.userManager.IsLockedOutAsync(user))
+                {
+                    this.ModelState.AddModelError(string.Empty, T.UserLockedOutErrorMessage);
+                    return this.View(model);
+                }
+
+                await this.SignInAsync(user, model.RememberMe);
+                return this.RedirectToDefault();
+            }
+
+            // Redirect to the home page or patient records
+            return this.RedirectToDefault();
+        }
+
+        return this.View(model);
+    }
+
+    // For authenticated patients to view their own records
+
+    // For authenticated doctors to view a specific patient's records
+
+    // Display patient records after security code verification
+
+    private async Task<List<DoctorViewModel>> GetPatientDoctor(Guid patientId)
+    {
+        // Get the doctor associated with this patient
+        var doctorPatient = await this.context.DoctorPatients
+            .FirstOrDefaultAsync(dp => dp.PatientId == patientId);
+
+        if (doctorPatient == null)
+        {
+            return new List<DoctorViewModel>();
+        }
+
+        var doctor = await this.context.Doctors
+            .FirstOrDefaultAsync(d => d.Id == doctorPatient.DoctorId);
+
+        if (doctor == null)
+        {
+            return new List<DoctorViewModel>();
+        }
+
+        return new List<DoctorViewModel>
+        {
+            new DoctorViewModel
+            {
+                Id = doctor.Id,
+                Name = $"{doctor.FirstName} {doctor.LastName}",
+                Specialisation = (Specialisation?)doctor.Specialisation,
+            },
+        };
+    }
+
+    // Sample data generation methods - in a real app these would be database queries
+
+    private async Task SignInAsync(
+        ApplicationUser user,
+        bool rememberMe)
+    {
+        var claimsPrinciple = await this.signInManager
+            .ClaimsFactory
+            .CreateAsync(user);
+
+        await this.HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            claimsPrinciple,
+            new AuthenticationProperties
+            {
+                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
+                IsPersistent = rememberMe,
+            });
     }
 }

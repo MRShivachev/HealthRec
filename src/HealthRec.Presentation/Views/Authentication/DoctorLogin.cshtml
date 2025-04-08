@@ -7,47 +7,47 @@
 
 <div class="card shadow border-0 rounded-3" style="margin-top: 5%; width: 40%; margin-left: 30%; margin-right: 30%">
     <div class="card-header bg-primary text-white text-center py-3">
-        <h3 class="mb-0 fw-bold"><i class="bi bi-person-badge me-2"></i>Doctor Login</h3>
+        <h3 class="mb-0 fw-bold"><i class="bi bi-person-badge me-2"></i>Вход за доктори</h3>
     </div>
     <div class="card-body p-4 p-lg-5">
         <div class="text-center mb-4">
 
-            <h4 class="text-primary fw-bold">Medical Professional Access</h4>
+            <h4 class="text-primary fw-bold">Професионален достъп</h4>
         </div>
 
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
             <div class="form-floating mb-3">
-                <input style="font-size: larger" asp-for="Email" class="form-control form-control-lg" placeholder="Email" autocomplete="username" />
-                <label style="font-size: larger" asp-for="Email">Email</label>
+                <input style="font-size: larger" asp-for="Email" class="form-control form-control-lg" placeholder="Имейл" autocomplete="username" />
+                <label style="font-size: larger" asp-for="Email">Имейл</label>
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-floating mb-4">
-                <input style="font-size: larger" asp-for="Password" class="form-control form-control-lg" placeholder="Password" autocomplete="current-password" />
-                <label style="font-size: larger"  asp-for="Password">Password</label>
+                <input style="font-size: larger" asp-for="Password" class="form-control form-control-lg" placeholder="Парола" autocomplete="current-password" />
+                <label style="font-size: larger"  asp-for="Password">Парола</label>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-check mb-4">
                 <input class="form-check-input" asp-for="RememberMe" />
                 <label class="form-check-label" asp-for="RememberMe">
-                    Remember me
+                    Запомни ме
                 </label>
             </div>
             <div class="d-grid gap-2 mb-4">
-                <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                <button type="submit" class="btn btn-primary btn-lg">Вход</button>
             </div>
 
         </form>
-        <a asp-action="ForgotPassword" class="text-decoration-none fw-bold fs-6">Forgot your password?</a>
+        <a asp-action="ForgotPassword" class="text-decoration-none fw-bold fs-6">Забравена парола?</a>
     </div>
 
 </div>
 <div class="text-center mt-3">
     <a asp-controller="Authentication" asp-action="Login" class="btn btn-sm btn-outline-secondary">
-        Back to Role Selection
+        Обратно към избор
     </a>
 </div>
 

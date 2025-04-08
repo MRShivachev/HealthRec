@@ -13,6 +13,7 @@ public static class ModelExtensions
             FirstName = doctor.FirstName!,
             LastName = doctor.LastName!,
             Email = doctor.Email!,
+            Phone = doctor.PhoneNumber,
             Specialisation = (SpecialisationModel)doctor.Specialisation,
             Patients = doctor.Patients?
                 .Select(dp =>

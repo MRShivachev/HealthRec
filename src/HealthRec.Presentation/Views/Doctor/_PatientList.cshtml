@@ -5,14 +5,61 @@
 @{
     var doctorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var isDoctorIdValid = Guid.TryParse(doctorId, out var parsedDoctorId);
+    Layout = "_Layout";
 }
+<style>
+    :root {
+        --primary-hover: #19b997;
+        --dark-blue: #1d3557;
+        --light-bg: #f8f9fa;
+        --primary-color: #00bf9c;
+        --primary-dark: #009e82;
+        --secondary-color: #2c3e50;
+        --light-gray: #f8f9fa;
+        --white: #fff;
+        --text-dark: #212529;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --border-radius: 0.5rem;
+        scrollbar-width: none;
+    }
+    footer {
+        background-color: var(--secondary-color);
+        color: var(--white);
+        padding: 3rem 0 2rem;
+    }
 
+    .footer-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .footer-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+        color: var(--primary-color);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        margin-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.6);
+    }
+</style>
 <div class="col-md-8">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">My Patients</h5>
+            <h5 class="mb-0">Пациенти</h5>
             <a asp-controller="Patient" asp-action="Create" class="btn btn-light btn-sm">
-                <i class="bi bi-plus-circle"></i> Add New Patient
+                <i class="bi bi-plus-circle"></i> Добавяне на нов пациент
             </a>
         </div>
         <div class="card-body">
@@ -22,11 +69,11 @@
                     <table class="table table-hover">
                         <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Security Code</th>
-                            <th>Actions</th>
+                            <th>Име</th>
+                            <th>Имейл</th>
+                            <th>Телефон</th>
+                            <th>Код за достъп</th>
+                            <th>Действия</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -42,7 +89,7 @@
                                        class="btn btn-sm btn-info">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    <a asp-controller="MedicalRecords" asp-action="PatientRecords"
+                                    <a asp-controller="Record" asp-action="MyRecords"
                                        asp-route-patientId="@patient.Id" class="btn btn-sm btn-primary">
                                         <i class="bi bi-journal-text"></i>
                                     </a>
@@ -56,7 +103,7 @@
             else
             {
                 <div class="alert alert-info">
-                    No patients found for this doctor.
+                    Няма пациенти свързани с този доктор
                 </div>
             }
         </div>

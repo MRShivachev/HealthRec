@@ -1,9 +1,137 @@
+@using HealthRec.Data.Entities
 @model DoctorDetailsViewModel
 
 @{
     ViewData["Title"] = "Doctor Details";
     Layout = "_Layout";
 }
+
+<div class="container mt-4" style="padding-top: 5%">
+    @if (ViewBag.SuccessMessage != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @ViewBag.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Профил на доктор</h5>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Д-р. @Model.Doctor!.FirstName @Model.Doctor.LastName</h4>
+                    <p class="card-text"><strong>Специализация:</strong> @Model.Doctor.Specialisation</p>
+                    <p class="card-text"><strong>Имейл:</strong> @Model.Doctor.Email</p>
+                    <p class="card-text"><strong>Телефон:</strong> @Model.Doctor.Phone</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Пациенти</h5>
+                    <a href="@Url.Action("Create", "Patient", new { id = Model.Doctor.Id })" class="btn btn-light btn-sm">
+                        <i class="bi bi-plus-circle"></i> Добавяне на нов пациент
+                    </a>
+                </div>
+                <div class="card-body">
+                    @if (Model.Patients!.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Име</th>
+                                    <th>Имейл</th>
+                                    <th>Телефон</th>
+                                    <th>Код за достъп</th>
+                                    <th>Действия</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var patient in Model.Patients!)
+                                {
+                                    <tr>
+                                        <td>@patient.FirstName @patient.LastName</td>
+                                        <td>@patient.Email</td>
+                                        <td>@patient.PhoneNumber</td>
+                                        <td><span class="badge bg-secondary">@patient.SecurityCode</span></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <a asp-controller="Patient" asp-action="Details" asp-route-id="@patient.Id"
+                                                   class="btn btn-sm btn-primary rounded-pill me-2"
+                                                   data-bs-toggle="tooltip" title="View Patient">
+                                                    <i class="bi bi-eye"></i> Преглед
+                                                </a>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-danger rounded-pill"
+                                                        data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                        data-patient-id="@patient.Id" data-patient-name="@patient.FirstName">
+                                                    <i class="bi bi-trash"></i> Изтриване
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                           Няма пациенти свързани с този доктор
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Потвържававне на изтриването</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <span id="patientNameSpan" class="fw-bold"></span>?</p>
+                <p class="text-danger small">Това действие не може да бъде отменено. Всички записи на този пациент ще бъдат изтрити за постоянно.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отказ</button>
+                <form method="post" id="deleteForm">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="returnUrl" value="@Url.Action("Details", "Doctor", new { id = Model.Doctor.Id })" />
+                    <button type="submit" class="btn btn-danger">Изтриване на пациент</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     :root {
@@ -20,320 +148,11 @@
         --border-radius: 0.5rem;
         scrollbar-width: none;
     }
-
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #333;
-    }
-
-    .page-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
-    }
-
-    .section-title {
-        font-size: 1.4rem;
-        color: var(--dark-blue);
-        margin-bottom: 1rem;
-        font-weight: 600;
-    }
-
-    .about-card {
-        border-radius: 12px;
-        border: none;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-        height: 100%;
-        margin-bottom: 1.5rem;
-    }
-
-    .about-text {
-        font-size: 0.9rem;
-        color: #555;
-        line-height: 1.6;
-    }
-
-    .team-member-card {
-        border: none;
-        border-radius: 10px;
-        overflow: hidden;
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .team-member-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .team-member-img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 3px solid var(--primary-color);
-    }
-
-    .team-member-name {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--dark-blue);
-        margin-bottom: 0.2rem;
-    }
-
-    .team-member-title {
-        font-size: 0.8rem;
-        color: var(--primary-color);
-        font-weight: 500;
-    }
-
-    .values-icon {
-        background-color: var(--primary-color);
-        color: white;
-        width: 48px;
-        height: 48px;
-        font-size: 1.3rem;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 1rem;
-    }
-
-    .timeline {
-        position: relative;
-        padding-left: 2rem;
-    }
-
-    .timeline::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 2px;
-        background-color: var(--primary-color);
-    }
-
-    .timeline-item {
-        position: relative;
-        padding-bottom: 1.5rem;
-    }
-
-    .timeline-item::before {
-        content: '';
-        position: absolute;
-        left: -2.1rem;
-        top: 0.25rem;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background-color: var(--primary-color);
-    }
-
-    .timeline-year {
-        font-weight: 600;
-        color: var(--dark-blue);
-        margin-bottom: 0.25rem;
-    }
-
-    @@media (max-width: 768px) {
-        .page-title {
-            font-size: 1.8rem;
-        }
-
-        .section-title {
-            font-size: 1.2rem;
-        }
-    }
-    :root {
-        --primary-color: #00b893;
-        --dark-blue: #1d3557;
-        --light-blue: #f8f9fa;
-        --text-color: #333;
-    }
-
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: var(--text-color);
-        background-color: white;
-        overflow-x: hidden;
-    }
-
-    .page-container {
-        min-height: 100vh;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .header-section {
-        background-color: white;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        padding: 15px 0;
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-    }
-
-    .header-links {
-        display: flex;
-        align-items: center;
-    }
-
-    .header-links a {
-        color: var(--dark-blue);
-        text-decoration: none;
-        margin-right: 25px;
-        font-weight: 500;
-        transition: color 0.3s;
-    }
-
-    .header-links a:hover {
-        color: var(--primary-color);
-    }
-
-    .btn-login {
-        background-color: #00b893;
-        color: white;
-        border-radius: 30px;
-        padding: 8px 25px;
-        font-weight: 600;
-        box-shadow: 0 4px 10px white;
-        transition: all 0.3s;
-        text-decoration: none;
-    }
-
-    .btn-login:hover {
-        background-color: #00886c;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px #00b893;
-        color: white;
-    }
-
-    .hero-section {
-        background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=1950&q=80');
-        background-size: cover;
-        background-position: center;
-        position: relative;
-        min-height: 60vh;
-        display: flex;
-        align-items: center;
-        width: 100%;
-    }
-
-    .hero-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 10;
-        width: 100%;
-        padding: 0 15px;
-    }
-
-    .hero-title {
-        color: var(--dark-blue);
-        font-weight: 700;
-        margin-bottom: 20px;
-        font-size: 3.5rem;
-    }
-
-    .hero-text {
-        color: #555;
-        font-size: 1.4rem;
-        margin-bottom: 30px;
-    }
-
-    .features-section {
-        padding: 60px 0;
-        background-color: var(--light-blue);
-        width: 100%;
-    }
-
-    .features-title {
-        text-align: center;
-        margin-bottom: 60px;
-        color: var(--dark-blue);
-        font-weight: 600;
-        font-size: 2.5rem;
-    }
-
-    .feature-card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        transition: transform 0.3s, box-shadow 0.3s;
-        height: 100%;
-        background-color: white;
-        overflow: hidden;
-    }
-
-    .feature-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    .feature-icon {
-        font-size: 3rem;
-        margin-bottom: 20px;
-        display: inline-block;
-        color: white;
-        padding: 25px;
-        border-radius: 50%;
-    }
-
-    .icon-patient {
-        background-color: #00b893;
-    }
-
-    .icon-appointment {
-        background-color: #4cc9f0;
-    }
-
-    .icon-reports {
-        background-color: #00b893;
-    }
-
-    .feature-title {
-        font-weight: 600;
-        color: var(--dark-blue);
-        margin-bottom: 15px;
-        font-size: 1.8rem;
-    }
-
-    .footer {
-        background-color: #00b893;
-        color: white;
-        padding: 20px 0;
-        margin-top: auto;
-    }
-
-    .footer a {
-        color: #7dd3fc;
-        text-decoration: none;
-        transition: color 0.3s;
-    }
-
-    .footer a:hover {
-        color: white;
-        text-decoration: underline;
-    }
     footer {
         background-color: var(--secondary-color);
         color: var(--white);
         padding: 3rem 0 2rem;
-        margin-top: 12.8%;
+        margin-top: 10%;
     }
 
     .footer-title {
@@ -361,96 +180,66 @@
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.6);
     }
-    @@media (max-width: 768px) {
-        .hero-title {
-            font-size: 2.5rem;
-        }
-        .hero-text {
-            font-size: 1.2rem;
-        }
-        .features-title {
-            font-size: 2rem;
-        }
+
+    .bg-primary {
+        background-color: #00bf9c !important;
+    }
+
+    .text-primary {
+        color: #00bf9c !important;
+    }
+
+    .btn-primary {
+        background-color: #00bf9c;
+        border-color: #00bf9c;
+    }
+
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: #009e82;
+        border-color: #009e82;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+    .btn-danger:hover, .btn-danger:focus {
+        background-color: #bb2d3b;
+        border-color: #bb2d3b;
+    }
+
+    .rounded-pill {
+        border-radius: 50px !important;
     }
 </style>
-<div class="container mt-4">
-    @if (ViewBag.SuccessMessage != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            @ViewBag.SuccessMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
 
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Doctor Profile</h5>
-                </div>
-                <div class="card-body">
-                    <h4 class="card-title">Dr. @Model.Doctor!.FirstName @Model.Doctor.LastName</h4>
-                    <p class="card-text"><strong>Specialty:</strong> @Model.Doctor.Specialisation</p>
-                    <p class="card-text"><strong>Email:</strong> @Model.Doctor.Email</p>
-                    <p class="card-text"><strong>Phone:</strong> @Model.Doctor.Phone</p>
-                </div>
-            </div>
-        </div>
+<script>
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
 
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">My Patients</h5>
-                    <a href="@Url.Action("Create", "Patient", new { id = Model.Doctor.Id })" class="btn btn-light btn-sm">
-                        <i class="bi bi-plus-circle"></i> Add New Patient
-                    </a>
-                </div>
-                <div class="card-body">
-                    @if (Model.Patients.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Security Code</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach (var patient in Model.Patients)
-                                {
-                                    <tr>
-                                        <td>@patient.Name</td>
-                                        <td>@patient.Email</td>
-                                        <td>@patient.PhoneNumber</td>
-                                        <td><span class="badge bg-secondary">@patient.SecurityCode</span></td>
-                                        <td>
-                                            <a asp-controller="Patient" asp-action="Details" asp-route-id="@patient.Id"
-                                               class="btn btn-sm btn-info">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a asp-controller="MedicalRecords" asp-action="PatientRecords"
-                                               asp-route-patientId="@patient.Id" class="btn btn-sm btn-primary">
-                                                <i class="bi bi-journal-text"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info">
-                            No patients found for this doctor. 
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        // Set up the delete modal
+        var deleteModal = document.getElementById('deleteModal');
+        if (deleteModal) {
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var patientId = button.getAttribute('data-patient-id');
+                var patientName = button.getAttribute('data-patient-name');
+
+                var patientNameSpan = document.getElementById('patientNameSpan');
+                if (patientNameSpan) {
+                    patientNameSpan.textContent = patientName;
+                }
+
+                var deleteForm = document.getElementById('deleteForm');
+                if (deleteForm) {
+                    deleteForm.action = '/patients/delete/' + patientId;
+                }
+            });
+        }
+    });
+</script>

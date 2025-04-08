@@ -14,5 +14,6 @@ public static class ModelExtensions
             LastName = patient.LastName,
             Phone = patient.PhoneNumber,
             DateOfBirth = patient.DateOfBirth,
+            SecurityCode = patient.Code,
         };
 }

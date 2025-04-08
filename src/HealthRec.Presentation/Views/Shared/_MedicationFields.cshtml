@@ -1,0 +1,22 @@
+@model MedicalRecordViewModel
+
+<div id="MedicationFields" class="record-fields" style="display: none;">
+    <div class="row">
+        <div class="col-md-4 form-group">
+            <label asp-for="MedicationName" class="form-label">Име на лекарство</label>
+            <input asp-for="MedicationName" class="form-control" />
+        </div>
+        <div class="col-md-4 form-group">
+            <label asp-for="Dosage" class="form-label">Доза</label>
+            <input asp-for="Dosage" class="form-control" placeholder="E.g. 500mg twice daily" />
+        </div>
+        <div class="col-md-4 form-group">
+            <label asp-for="Duration" class="form-label">Продължителност на лечението</label>
+            <input asp-for="Duration" class="form-control" placeholder="E.g. 7 days" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Prescription" class="form-label">Подробности за рецептата</label>
+        <textarea asp-for="Prescription" class="form-control" rows="3"></textarea>
+    </div>
+</div>

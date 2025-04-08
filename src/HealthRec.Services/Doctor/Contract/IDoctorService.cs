@@ -1,5 +1,6 @@
 using Essentials.Results;
 using HealthRec.Services.Doctor.Model;
+using HealthRec.Services.Patient.Models;
 
 namespace HealthRec.Services.Doctor.Contract;
 
@@ -11,4 +12,5 @@ public interface IDoctorService
     public Task<MutationResult?> CreateDoctorAsync(DoctorModel doctor);
     public Task<MutationResult?> DeleteDoctorAsync(Guid id);
     public Task<bool> IsDoctorForPatientAsync(Guid patientId, Guid userId);
+    public Task<IEnumerable<PatientModel>> GetPatientsByDoctorIdAsync(Guid? doctorId);
 }

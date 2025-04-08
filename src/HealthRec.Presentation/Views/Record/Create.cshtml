@@ -1,0 +1,228 @@
+@using HealthRec.Data
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model HealthRec.Presentation.Models.MedicalRecordViewModel
+
+@{
+    ViewData["Title"] = "Create Medical Record";
+    Layout = "_Layout";
+}
+
+<div class="container medical-record-form">
+    <h2 class="mb-4">Create Medical Record</h2>
+
+    <form asp-action="Create" method="post" id="medicalRecordForm" enctype="multipart/form-data">
+        <input type="hidden" asp-for="PatientId" />
+
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label asp-for="RecordType" class="form-label">Record Type</label>
+                <select asp-for="RecordType"
+                        class="form-control"
+                        asp-items="Html.GetEnumSelectList<RecordType>()"
+                        id="recordType">
+                </select>
+            </div>
+
+            <div class="col-md-6 form-group">
+                <label asp-for="CreatedDate" class="form-label">Date of Examination</label>
+                <input asp-for="CreatedDate" type="date" class="form-control" />
+            </div>
+        </div>
+
+        <!-- Diagnosis Fields -->
+        <div id="DiagnosisFields" class="record-fields" style="display: none;">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label asp-for="DiagnosisCode" class="form-label">Diagnosis Code (ICD-10)</label>
+                    <input asp-for="DiagnosisCode" class="form-control" placeholder="E.g. A01.0" />
+                </div>
+                <div class="col-md-6 form-group">
+                    <label asp-for="Severity" class="form-label">Severity</label>
+                    <select asp-for="Severity" class="form-control">
+                        <option value="">Select Severity</option>
+                        <option value="Mild">Mild</option>
+                        <option value="Moderate">Moderate</option>
+                        <option value="Severe">Severe</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="TreatmentPlan" class="form-label">Treatment Plan</label>
+                <textarea asp-for="TreatmentPlan" class="form-control" rows="4" placeholder="Detailed treatment recommendations"></textarea>
+            </div>
+        </div>
+
+        <!-- Test Result Fields -->
+        <div id="TestResultFields" class="record-fields" style="display: none;">
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label asp-for="TestType" class="form-label">Test Type</label>
+                    <input asp-for="TestType" class="form-control" placeholder="Blood Test, X-Ray, etc." />
+                </div>
+                <div class="col-md-4 form-group">
+                    <label asp-for="TestResults" class="form-label">Results</label>
+                    <input asp-for="TestResults" class="form-control" />
+                </div>
+                <div class="col-md-4 form-group">
+                    <label asp-for="NormalRange" class="form-label">Normal Range</label>
+                    <input asp-for="NormalRange" class="form-control" placeholder="E.g. 4.0-6.0" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Test Result File</label>
+                <input type="file" name="TestResultFile" class="form-control" accept=".pdf,.jpg,.png" />
+            </div>
+        </div>
+
+        <!-- Medication Fields -->
+        <div id="MedicationFields" class="record-fields" style="display: none;">
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label asp-for="MedicationName" class="form-label">Medication Name</label>
+                    <input asp-for="MedicationName" class="form-control" />
+                </div>
+                <div class="col-md-4 form-group">
+                    <label asp-for="Dosage" class="form-label">Dosage</label>
+                    <input asp-for="Dosage" class="form-control" placeholder="E.g. 500mg twice daily" />
+                </div>
+                <div class="col-md-4 form-group">
+                    <label asp-for="Duration" class="form-label">Treatment Duration</label>
+                    <input asp-for="Duration" class="form-control" placeholder="E.g. 7 days" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Prescription" class="form-label">Prescription Details</label>
+                <textarea asp-for="Prescription" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+
+        <!-- Vaccination Fields -->
+        <div id="VaccinationFields" class="record-fields" style="display: none;">
+            <div class="row">
+                <div class="col-md-6 form-group">
+                    <label asp-for="VaccineName" class="form-label">Vaccine Name</label>
+                    <input asp-for="VaccineName" class="form-control" />
+                </div>
+                <div class="col-md-6 form-group">
+                    <label asp-for="VaccineDose" class="form-label">Dose</label>
+                    <input asp-for="VaccineDose" class="form-control" placeholder="1st, 2nd, Booster" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Common Fields -->
+        <div class="form-group">
+            <label asp-for="Description" class="form-label">Additional Notes</label>
+            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Additional medical observations or notes"></textarea>
+        </div>
+
+        <div class="form-group mt-3">
+            <button type="submit" class="btn btn-primary">Create Medical Record</button>
+        </div>
+    </form>
+</div>
+<style>
+    :root {
+        --primary-color: #00bf9c;
+        --primary-dark: #009e82;
+        --secondary-color: #2c3e50;
+        --light-gray: #f8f9fa;
+        --white: #fff;
+        --text-dark: #212529;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --border-radius: 0.5rem;
+        scrollbar-width: none;
+    }
+
+    footer {
+        background-color: var(--secondary-color);
+        color: var(--white);
+        padding: 3rem 0 2rem;
+        margin-top: 10%;
+    }
+
+    .footer-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .footer-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+        color: var(--primary-color);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        margin-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+    .bg-primary {
+        background-color: #00bf9c !important;
+    }
+
+    .btn-primary, .btn-info {
+        background-color: #00bf9c;
+        border-color: #00bf9c;
+    }
+
+    .btn-primary:hover, .btn-info:hover {
+        background-color: #009e82;
+        border-color: #009e82;
+    }
+
+    .badge {
+        font-weight: 500;
+    }
+</style>
+@section Scripts {
+    <script>
+        function updateRecordFields() {
+            var recordTypeSelect = document.getElementById("recordType");
+            var selected = recordTypeSelect.value;
+
+            // Hide all conditional sections first
+            document.querySelectorAll(".record-fields").forEach(function(el){
+                el.style.display = "none";
+            });
+
+            // Show the appropriate section based on selected record type
+            switch(selected) {
+                case "1": // Diagnosis
+                    document.getElementById("DiagnosisFields").style.display = "block";
+                    break;
+                case "2": // TestResult
+                    document.getElementById("TestResultFields").style.display = "block";
+                    break;
+                case "3": // Medication
+                    document.getElementById("MedicationFields").style.display = "block";
+                    break;
+                case "4": // Vaccination
+                    document.getElementById("VaccinationFields").style.display = "block";
+                    break;
+            }
+        }
+
+        // Add event listener to record type select
+        document.getElementById("recordType").addEventListener("change", updateRecordFields);
+
+        // Trigger update on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            updateRecordFields();
+        });
+    </script>
+}

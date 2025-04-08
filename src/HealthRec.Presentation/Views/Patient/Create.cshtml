@@ -4,13 +4,380 @@
     ViewData["Title"] = "Create Patient";
     Layout = "_Layout";
 }
+<style>
+    :root {
+        --primary-hover: #19b997;
+        --dark-blue: #1d3557;
+        --light-bg: #f8f9fa;
+        --primary-color: #00bf9c;
+        --primary-dark: #009e82;
+        --secondary-color: #2c3e50;
+        --light-gray: #f8f9fa;
+        --white: #fff;
+        --text-dark: #212529;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --border-radius: 0.5rem;
+        scrollbar-width: none;
+    }
 
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        color: var(--dark-blue);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .about-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        height: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .about-text {
+        font-size: 0.9rem;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .team-member-card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .team-member-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-member-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid var(--primary-color);
+    }
+
+    .team-member-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 0.2rem;
+    }
+
+    .team-member-title {
+        font-size: 0.8rem;
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .values-icon {
+        background-color: var(--primary-color);
+        color: white;
+        width: 48px;
+        height: 48px;
+        font-size: 1.3rem;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 2px;
+        background-color: var(--primary-color);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2.1rem;
+        top: 0.25rem;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+    }
+
+    .timeline-year {
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 0.25rem;
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+        }
+    }
+    :root {
+        --primary-color: #00b893;
+        --dark-blue: #1d3557;
+        --light-blue: #f8f9fa;
+        --text-color: #333;
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-color);
+        background-color: white;
+        overflow-x: hidden;
+    }
+
+    .page-container {
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-section {
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 15px 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .header-links {
+        display: flex;
+        align-items: center;
+    }
+
+    .header-links a {
+        color: var(--dark-blue);
+        text-decoration: none;
+        margin-right: 25px;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .header-links a:hover {
+        color: var(--primary-color);
+    }
+
+    .btn-login {
+        background-color: #00b893;
+        color: white;
+        border-radius: 30px;
+        padding: 8px 25px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px white;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-login:hover {
+        background-color: #00886c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px #00b893;
+        color: white;
+    }
+
+    .hero-section {
+        background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        padding: 0 15px;
+    }
+
+    .hero-title {
+        color: var(--dark-blue);
+        font-weight: 700;
+        margin-bottom: 20px;
+        font-size: 3.5rem;
+    }
+
+    .hero-text {
+        color: #555;
+        font-size: 1.4rem;
+        margin-bottom: 30px;
+    }
+
+    .features-section {
+        padding: 60px 0;
+        background-color: var(--light-blue);
+        width: 100%;
+    }
+
+    .features-title {
+        text-align: center;
+        margin-bottom: 60px;
+        color: var(--dark-blue);
+        font-weight: 600;
+        font-size: 2.5rem;
+    }
+
+    .feature-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        display: inline-block;
+        color: white;
+        padding: 25px;
+        border-radius: 50%;
+    }
+
+    .icon-patient {
+        background-color: #00b893;
+    }
+
+    .icon-appointment {
+        background-color: #4cc9f0;
+    }
+
+    .icon-reports {
+        background-color: #00b893;
+    }
+
+    .feature-title {
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .footer {
+        background-color: #00b893;
+        color: white;
+        padding: 20px 0;
+        margin-top: auto;
+    }
+
+    .footer a {
+        color: #7dd3fc;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .footer a:hover {
+        color: white;
+        text-decoration: underline;
+    }
+    footer {
+        background-color: var(--secondary-color);
+        color: var(--white);
+        padding: 3rem 0 2rem;
+        margin-top: 12.8%;
+    }
+
+    .footer-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .footer-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+        color: var(--primary-color);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        margin-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.6);
+    }
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        .hero-text {
+            font-size: 1.2rem;
+        }
+        .features-title {
+            font-size: 2rem;
+        }
+    }
+</style>
 <div class="container mt-4">
     <div class="row">
-        <div class="col-md-8 offset-md-2">
+        <div class="col-md-8 offset-md-2" style="margin-top: 5%">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Create New Patient</h5>
+                    <h5 class="mb-0">Създаване на нов пациент</h5>
                 </div>
                 <div class="card-body">
                     <form asp-action="Create" method="post">
@@ -60,8 +427,8 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Assigned Doctor</label>
-                                    <p class="form-control-static">This patient will be automatically assigned</p>
+                                    <label class="control-label">Назначен доктор</label>
+                                    <p class="form-control-static">Този пациент ще бъде автоматично назначен</p>
                                     <input type="hidden" asp-for="AssignedDoctorId" data-bs-target="doctorId" />
                                 </div>
                             </div>
@@ -70,8 +437,8 @@
                         <hr />
 
                         <div class="form-group mt-4">
-                            <button type="submit" class="btn btn-primary">Create Patient</button>
-                            <a asp-controller="Doctor" asp-action="Index" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Създаване на пациент</button>
+                            <a asp-controller="Doctor" asp-action="Index" class="btn btn-secondary">Отказ</a>
                         </div>
                     </form>
                 </div>

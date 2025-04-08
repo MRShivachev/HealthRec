@@ -77,4 +77,17 @@ public class CommonHelper
 
         return await this.IsDoctorForPatientAsync(patientId);
     }
+
+    public string GetFullName()
+    {
+        var givenName = this.user.FindFirstValue(ClaimTypes.GivenName);
+        var surname = this.user.FindFirstValue(ClaimTypes.Surname);
+
+        if (!string.IsNullOrEmpty(givenName) && !string.IsNullOrEmpty(surname))
+        {
+            return $"{givenName} {surname}";
+        }
+
+        return this.user.FindFirstValue(ClaimTypes.Name) ?? "Unknown User";
+    }
 }

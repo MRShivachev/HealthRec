@@ -116,6 +116,18 @@ internal class PatientService : IPatientService
                 return MutationResult.ResultFrom("Patient not found");
             }
 
+            // First, delete any doctor-patient relationships
+            var doctorPatients = await this.context.DoctorPatients
+                .Where(dp => dp.PatientId == id)
+                .ToListAsync();
+
+            if (doctorPatients.Any())
+            {
+                this.context.DoctorPatients.RemoveRange(doctorPatients);
+                await this.context.SaveChangesAsync();
+            }
+
+            // Now delete the patient
             this.context.Patients.Remove(patientEntity);
             await this.context.SaveChangesAsync();
 

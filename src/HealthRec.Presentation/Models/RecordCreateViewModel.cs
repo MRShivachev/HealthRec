@@ -11,7 +11,7 @@ public class RecordCreateViewModel
     // Description of the record (e.g. additional notes or context)
     public string? Description { get; set; }
 
-    // The type of the record (e.g. Diagnose, TestResult, Medication, Vaccination)
+    // The type of the record (e.g. Diagnosis, TestResult, Medication, Vaccination)
     public RecordType Type { get; set; }
 
     // If the record is a test result, the specific result value

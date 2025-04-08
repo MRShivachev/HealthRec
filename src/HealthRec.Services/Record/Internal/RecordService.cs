@@ -39,7 +39,7 @@ internal class RecordService : IRecordService
             .AsNoTracking()
             .ToListAsync();
 
-    public async Task<RecordModel?> GetByIdAsync(Guid id) =>
+    public async Task<RecordModel?> GetByIdAsync(long id) =>
         await this.context.Records
             .Where(r => r.Id == id)
             .Select(r => new RecordModel
@@ -53,19 +53,34 @@ internal class RecordService : IRecordService
             })
             .FirstOrDefaultAsync();
 
-    public async Task<MutationResult> CreateRecordAsync(RecordModel record)
+    public async Task<MutationResult> CreateRecordAsync(RecordModel model)
     {
         try
         {
             var recordEntity = new Data.Record
             {
-                Id = record.Id,
-                Description = record.Description,
-                Result = record.Result,
-                ReferenceRange = record.ReferenceRange,
-                MedicationDetails = record.MedicationDetails,
-                Type = record.Type,
-                Date = DateTime.UtcNow,
+                Description = model.Description,
+                PatientId = model.PatientId,
+                Result = model.TestResults,
+                MedicationDetails = model.MedicationDetails,
+                NormalRange = model.NormalRange,
+                RecordDate = model.RecordDate,
+                Type = model.Type,
+                Department = model.Department,
+                CreatedDate = DateTime.Now,
+                DiagnosisCode = model.DiagnosisCode,
+                TreatmentPlan = model.TreatmentPlan,
+                TestResults = model.TestResults,
+                Dosage = model.Dosage,
+                Instructions = model.Instructions,
+                Notes = model.Notes,
+                Severity = model.Severity,
+                TestType = model.TestType,
+                MedicationName = model.MedicationName,
+                Duration = model.Duration,
+                Prescription = model.Prescription,
+                VaccineName = model.VaccineName,
+                VaccineDose = model.VaccineDose,
             };
 
             this.context.Records.Add(recordEntity);
@@ -80,7 +95,7 @@ internal class RecordService : IRecordService
         }
     }
 
-    public async Task<MutationResult> UpdateRecordAsync(Guid id, RecordModel record)
+    public async Task<MutationResult> UpdateRecordAsync(long id, RecordModel record)
     {
         try
         {
@@ -108,7 +123,23 @@ internal class RecordService : IRecordService
         }
     }
 
-    public async Task<MutationResult> DeleteRecordAsync(Guid id)
+    public async Task<List<RecordModel>> GetRecordsByPatientIdAsync(Guid patientId)
+    {
+        return await this.context.Records
+            .Where(r => r.PatientId == patientId)
+            .Select(r => new RecordModel
+            {
+                Id = r.Id,
+                Description = r.Description,
+                Result = r.Result,
+                ReferenceRange = r.ReferenceRange,
+                MedicationDetails = r.MedicationDetails,
+                Type = r.Type,
+            })
+            .ToListAsync();
+    }
+
+    public async Task<MutationResult> DeleteRecordAsync(long id)
     {
         try
         {
@@ -128,21 +159,5 @@ internal class RecordService : IRecordService
             this.logger.LogError(e, e.Message);
             return MutationResult.ResultFrom(null, "Error deleting record");
         }
-    }
-
-    public async Task<List<RecordModel>> GetRecordsByPatientIdAsync(Guid patientId)
-    {
-        return await this.context.Records
-            .Where(r => r.PatientId == patientId)
-            .Select(r => new RecordModel
-            {
-                Id = r.Id,
-                Description = r.Description,
-                Result = r.Result,
-                ReferenceRange = r.ReferenceRange,
-                MedicationDetails = r.MedicationDetails,
-                Type = r.Type,
-            })
-            .ToListAsync();
     }
 }

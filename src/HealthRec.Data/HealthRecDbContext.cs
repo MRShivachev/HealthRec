@@ -15,12 +15,14 @@ public class HealthRecDbContext : IdentityDbContext<ApplicationUser, Application
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<DoctorPatient> DoctorPatients { get; set; } // Changed to plural to match table name
     public DbSet<Record> Records { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Doctor>().ToTable("Doctors");
         modelBuilder.Entity<Patient>().ToTable("Patients");
+        modelBuilder.Entity<Record>().ToTable("Records");
 
         // Configure DoctorPatient entity
         modelBuilder.ApplyConfiguration(new DoctorPatient.Configuration());

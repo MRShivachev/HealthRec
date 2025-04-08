@@ -6,6 +6,7 @@ namespace HealthRec.Presentation.Models
 {
     public class PatientRecordsViewModel
     {
+        public Guid PatientId { get; set; }
         public string? PatientName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string? MedicalRecordNumber { get; set; }

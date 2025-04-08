@@ -220,6 +220,53 @@ namespace HealthRec.Data.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Records",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NextAppointment = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Result = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReferenceRange = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MedicationDetails = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PatientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    RecordDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RecordType = table.Column<int>(type: "int", nullable: false),
+                    Department = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DoctorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DiagnosisCode = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Severity = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    TreatmentPlan = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    TestType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    TestResults = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    NormalRange = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    TestResultFilePath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    MedicationName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Dosage = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Duration = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Prescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Instructions = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    VaccineName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    VaccineDose = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Records", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Records_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -269,6 +316,11 @@ namespace HealthRec.Data.Migrations
                 name: "IX_DoctorPatients_PatientId",
                 table: "DoctorPatients",
                 column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Records_PatientId",
+                table: "Records",
+                column: "PatientId");
         }
 
         /// <inheritdoc />
@@ -291,6 +343,9 @@ namespace HealthRec.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "DoctorPatients");
+
+            migrationBuilder.DropTable(
+                name: "Records");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

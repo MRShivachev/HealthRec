@@ -6,6 +6,8 @@ using HealthRec.Data.Entities;
 using HealthRec.Services.Doctor.Contract;
 using HealthRec.Services.Doctor.Extensions;
 using HealthRec.Services.Doctor.Model;
+using HealthRec.Services.Patient.Extensions;
+using HealthRec.Services.Patient.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -42,6 +44,12 @@ internal class DoctorService : IDoctorService
             .Select(x => x.ToModel())
             .FirstOrDefaultAsync();
 
+    public async Task<IEnumerable<PatientModel>> GetPatientsByDoctorIdAsync(Guid? doctorId) =>
+        await this.context.Patients
+            .Where(p => p.Doctors != null && p.Doctors.Any(dp => dp.DoctorId == doctorId))
+            .Select(x => x.ToModel())
+            .ToListAsync();
+
     public async Task<MutationResult?> CreateDoctorAsync(DoctorModel doctor)
     {
         try
@@ -53,6 +61,7 @@ internal class DoctorService : IDoctorService
                 Email = doctor.Email,
                 UserName = doctor.FirstName + doctor.LastName,
                 Specialisation = (Specialisation)doctor.Specialisation,
+                PhoneNumber = doctor.Phone,
             };
 
             var result = await this.userManager.CreateAsync(doctorEntity, doctor.Password!);

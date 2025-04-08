@@ -107,15 +107,13 @@
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="text-center mb-4">
-                <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
-                    <h1 class="page-title">HEALTH RECORDS SYSTEM</h1>
-                </a>
+                <h1 class="page-title">HEALTH RECORDS SYSTEM</h1>
             </div>
 
             <div class="security-card card">
                 <div class="card-header">
                     <i class="bi bi-shield-lock header-icon"></i>
-                    <h2 class="h3 mb-0">Patient Verification</h2>
+                    <h2 class="h3 mb-0">Верификация на пациент</h2>
                 </div>
 
                 <div class="card-body p-4 p-lg-5">
@@ -126,9 +124,9 @@
                         </div>
                     }
 
-                    <p class="mb-4 text-center" style="font-size: large">Please enter your 8-digit security code to access your medical records.</p>
+                    <p class="mb-4 text-center" style="font-size: large">Моля въведете вашият 8 цифрен код за достъп за да получите достъп да здравните ви досиета</p>
 
-                    <form asp-controller="MedicalRecords" asp-action="VerifySecurityCode" method="post">
+                    <form asp-controller="Record" asp-action="VerifySecurityCode" method="post">
                         <div class="form-group mb-4">
                             <div class="mb-3">
                                 <input asp-for="SecurityCode" class="form-control form-control-lg security-input"
@@ -136,43 +134,37 @@
                                 <span asp-validation-for="SecurityCode" class="text-danger"></span>
                             </div>
                             <div class="security-info mb-1">
-                                • Your security code is the 8-digit number provided by your healthcare provider
+                                • Вашият код за сигурност е 8-цифреното число, предоставено от вашия доставчик на здравни услуги
                             </div>
                             <div class="security-info mb-1">
-                                • This code verifies your identity and protects your private health information
+                                • Този код потвърждава вашата самоличност и защитава личната ви здравна информация
                             </div>
                             <div class="security-info">
-                                • If you don't have a security code, please contact your healthcare provider
+                                • Ако нямате код за сигурност, моля, свържете се с вашия доставчик на здравни услуги
                             </div>
                         </div>
 
                         <div class="d-grid gap-2 mb-4">
-                            <button type="submit" class="btn btn-primary btn-lg">Access My Records</button>
+                            <button type="submit" class="btn btn-primary btn-lg">Достъп до моите досиета</button>
                         </div>
                     </form>
 
                     <hr class="my-4">
 
                     <div class="p-3 bg-light rounded">
-                        <h3 class="h5 mb-3">How to find your security code:</h3>
-                        <p class="mb-2"><span class="circle-step">1</span> Check your recent healthcare correspondence</p>
-                        <p class="mb-2"><span class="circle-step">2</span> Look for a "Security Code" or "Patient Access Code" in your discharge papers</p>
-                        <p class="mb-0"><span class="circle-step">3</span> Call the patient support number on your healthcare card for assistance</p>
+                        <h3 class="h5 mb-3">Как да намерите вашия код за сигурност:</h3>
+                        <p class="mb-2"><span class="circle-step">1</span> Проверете скорошната си кореспонденция за здравеопазване</p>
+                        <p class="mb-2"><span class="circle-step">2</span> Потърсете „Код за сигурност“ или „Код за достъп на пациента“ в документите си за изписване</p>
+                        <p class="mb-0"><span class="circle-step">3</span> Обадете се на номера за поддръжка на пациенти във вашата здравна карта за съдействие</p>
                     </div>
 
                 </div>
 
                 <div class="card-footer bg-light p-3 text-center">
                     <p class="mb-0 small" style="font-size: small">
-                        <i class="bi bi-shield-check me-1"></i>Your privacy is important to us. All data is encrypted and secure.
+                        <i class="bi bi-shield-check me-1"></i>Вашата поверителност е важна за нас. Всички данни са криптирани и защитени.
                     </p>
                 </div>
-            </div>
-
-            <div class="text-center mt-3">
-                <a asp-controller="Authentication" asp-action="Login" class="btn btn-sm btn-outline-secondary">
-                   Back to Role Selection
-                </a>
             </div>
         </div>
     </div>

@@ -1,0 +1,967 @@
+@using HealthRec.Data
+@using HealthRec.Presentation.Helpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model PatientRecordsViewModel
+
+@{
+    ViewData["Title"] = "My Medical Records";
+    Layout = "_Layout";
+    var helper = new CommonHelper(User);
+    var role = helper.GetUserRole();
+    var isDoctor = role == "Doctor";
+    var isAdmin = role == "Admin";
+}
+<style>
+    :root {
+        --primary-hover: #19b997;
+        --dark-blue: #1d3557;
+        --light-bg: #f8f9fa;
+        --primary-color: #00bf9c;
+        --primary-dark: #009e82;
+        --secondary-color: #2c3e50;
+        --light-gray: #f8f9fa;
+        --white: #fff;
+        --text-dark: #212529;
+        --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --border-radius: 0.5rem;
+        scrollbar-width: none;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        color: var(--dark-blue);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .about-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        height: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .about-text {
+        font-size: 0.9rem;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .team-member-card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .team-member-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .team-member-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid var(--primary-color);
+    }
+
+    .team-member-name {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 0.2rem;
+    }
+
+    .team-member-title {
+        font-size: 0.8rem;
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    .values-icon {
+        background-color: var(--primary-color);
+        color: white;
+        width: 48px;
+        height: 48px;
+        font-size: 1.3rem;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 2px;
+        background-color: var(--primary-color);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 1.5rem;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -2.1rem;
+        top: 0.25rem;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+    }
+
+    .timeline-year {
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 0.25rem;
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+        }
+    }
+
+    :root {
+        --primary-color: #00b893;
+        --dark-blue: #1d3557;
+        --light-blue: #f8f9fa;
+        --text-color: #333;
+    }
+
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: var(--text-color);
+        background-color: white;
+        overflow-x: hidden;
+    }
+
+    .page-container {
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .header-section {
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 15px 0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .header-links {
+        display: flex;
+        align-items: center;
+    }
+
+    .header-links a {
+        color: var(--dark-blue);
+        text-decoration: none;
+        margin-right: 25px;
+        font-weight: 500;
+        transition: color 0.3s;
+    }
+
+    .header-links a:hover {
+        color: var(--primary-color);
+    }
+
+    .btn-login {
+        background-color: #00b893;
+        color: white;
+        border-radius: 30px;
+        padding: 8px 25px;
+        font-weight: 600;
+        box-shadow: 0 4px 10px white;
+        transition: all 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-login:hover {
+        background-color: #00886c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px #00b893;
+        color: white;
+    }
+
+    .hero-section {
+        background-image: url('https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&w=1950&q=80');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        padding: 0 15px;
+    }
+
+    .hero-title {
+        color: var(--dark-blue);
+        font-weight: 700;
+        margin-bottom: 20px;
+        font-size: 3.5rem;
+    }
+
+    .hero-text {
+        color: #555;
+        font-size: 1.4rem;
+        margin-bottom: 30px;
+    }
+
+    .features-section {
+        padding: 60px 0;
+        background-color: var(--light-blue);
+        width: 100%;
+    }
+
+    .features-title {
+        text-align: center;
+        margin-bottom: 60px;
+        color: var(--dark-blue);
+        font-weight: 600;
+        font-size: 2.5rem;
+    }
+
+    .feature-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+        background-color: white;
+        overflow: hidden;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        display: inline-block;
+        color: white;
+        padding: 25px;
+        border-radius: 50%;
+    }
+
+    .icon-patient {
+        background-color: #00b893;
+    }
+
+    .icon-appointment {
+        background-color: #4cc9f0;
+    }
+
+    .icon-reports {
+        background-color: #00b893;
+    }
+
+    .feature-title {
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 15px;
+        font-size: 1.8rem;
+    }
+
+    .footer {
+        background-color: #00b893;
+        color: white;
+        padding: 20px 0;
+        margin-top: auto;
+    }
+
+    .footer a {
+        color: #7dd3fc;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .footer a:hover {
+        color: white;
+        text-decoration: underline;
+    }
+
+    footer {
+        background-color: var(--secondary-color);
+        color: var(--white);
+        padding: 3rem 0 2rem;
+    }
+
+    .footer-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .footer-link {
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        display: block;
+        margin-bottom: 0.5rem;
+        transition: color 0.3s ease;
+    }
+
+    .footer-link:hover {
+        color: var(--primary-color);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        margin-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+
+        .hero-text {
+            font-size: 1.2rem;
+        }
+
+        .features-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+<style>
+    :root {
+        --primary-color: #1ed1a8;
+        --primary-hover: #19b997;
+        --dark-blue: #1d3557;
+        --light-bg: #f8f9fa;
+        --danger-color: #dc3545;
+        --warning-color: #ffc107;
+        --success-color: #28a745;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+        font-size: 0.85rem;
+    }
+
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        color: var(--dark-blue);
+        margin-bottom: 1rem;
+        font-weight: 600;
+    }
+
+    .card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+    }
+
+    .patient-info {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .patient-info:hover {
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .patient-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--dark-blue);
+        margin-bottom: 0.25rem;
+    }
+
+    .patient-details {
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .record-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+    .record-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .record-card.active {
+        border-left: 4px solid var(--primary-color);
+    }
+
+    .record-date {
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .record-type {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--dark-blue);
+    }
+
+    .record-doctor {
+        font-size: 0.8rem;
+        color: #555;
+    }
+
+    .record-tag {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        display: inline-block;
+        margin-right: 0.3rem;
+    }
+
+    .tag-diagnosis {
+        background-color: rgba(220, 53, 69, 0.1);
+        color: var(--danger-color);
+    }
+
+    .tag-test {
+        background-color: rgba(255, 193, 7, 0.1);
+        color: #d9a400;
+    }
+
+    .tag-medication {
+        background-color: rgba(40, 167, 69, 0.1);
+        color: var(--success-color);
+    }
+
+    .tag-vaccination {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+    }
+
+    .tag-appointment {
+        background-color: rgba(108, 117, 125, 0.1);
+        color: #6c757d;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--dark-blue);
+    }
+
+    .detail-value {
+        font-size: 0.85rem;
+    }
+
+    .doctor-info {
+        background-color: var(--light-bg);
+        padding: 0.8rem;
+        border-radius: 8px;
+        margin-top: 1rem;
+    }
+
+    .filter-box {
+        background-color: white;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-control, .form-select {
+        font-size: 0.85rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(30, 209, 168, 0.25);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(30, 209, 168, 0.25);
+    }
+
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(30, 209, 168, 0.25);
+    }
+
+    .rounded-pill {
+        border-radius: 50px !important;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .pagination .page-link {
+        color: var(--primary-color);
+    }
+
+    @@media (max-width: 768px) {
+        .page-title {
+            font-size: 1.7rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="page-title">Медицински досиета</h1>
+        </div>
+    </div>
+
+    <!-- Patient Information Banner -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="patient-info">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="patient-name">@Model.PatientName</div>
+
+                    <!-- Action buttons for patient records -->
+                    <div class="d-flex">
+                        @if (isDoctor || isAdmin)
+                        {
+                            <a asp-controller="Record" asp-action="Create" asp-route-patientId="@Model.PatientId"
+                               class="btn btn-primary btn-sm rounded-pill me-2">
+                                <i class="bi bi-plus-circle me-1"></i> Добавяне на ново медицинско досие
+                            </a>
+                        }
+                        <a href="#" class="btn btn-outline-primary btn-sm rounded-pill">
+                            <i class="bi bi-printer me-1"></i> Принтиране на досие
+                        </a>
+                    </div>
+                </div>
+                <div class="patient-details">
+                    <span class="me-3"><i
+                            class="bi bi-calendar3 me-1"></i> Роден: @Model.DateOfBirth.ToString("MMMM d, yyyy") (@((int)((DateTime.Now - Model.DateOfBirth).TotalDays / 365.25)) години)</span>
+                    <span class="me-3"><i class="bi bi-tag me-1"></i> MRN: @Model.MedicalRecordNumber</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Medical Records List -->
+        <div class="col-lg-4">
+            <h2 class="section-title">Досиета (@Model.Records.Count)</h2>
+
+            <div class="record-list">
+                @if (Model.Records.Count == 0)
+                {
+                    <div class="empty-state">
+                        <i class="bi bi-clipboard-x empty-state-icon"></i>
+                        <h3 class="h5">Няма намерени досиета</h3>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var record in Model.Records)
+                    {
+                        <div class="card record-card @(record.Id == Model.Records.First().Id ? "active" : "")"
+                             data-record-id="@record.Id">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="record-date">@record.RecordDate.ToString("MMM d, yyyy")</div>
+                                        <div class="record-type">@record.Title</div>
+                                        <div class="record-doctor">Д-р. @record.DoctorName</div>
+                                    </div>
+                                    <div>
+                                        @{
+                                            string tagClass = record.RecordType! switch
+                                            {
+                                                RecordType.Диагноза => "tag-diagnosis",
+                                                RecordType.Резултат => "tag-test",
+                                                RecordType.Лекарства => "tag-medication",
+                                                RecordType.Ваксинцаия => "tag-vaccination",
+                                                _ => ""
+                                            };
+                                        }
+                                        <span class="record-tag @tagClass">@record.RecordType</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination pagination-sm justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Предишно</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Следващо</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+
+        <!-- Record Details -->
+        <div class="col-lg-8">
+            <h2 class="section-title">Детайли за досие</h2>
+
+            <div class="card">
+                <div class="card-body p-4">
+                    @if (Model.Records.Count == 0)
+                    {
+                        <div class="empty-state">
+                            <i class="bi bi-file-earmark-text empty-state-icon"></i>
+                            <h3 class="h5">Няма избрано досие</h3>
+                            <p class="text-muted">Моля изберете досие за да видите детайли</p>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var record in Model.Records)
+                        {
+                            <div id="recordDetails">
+                                <h3 class="h4 mb-3">@record!.Title</h3>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="mb-2">
+                                            <span class="detail-label">Вид досие:</span>
+                                            <span class="detail-value">@record.RecordType</span>
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="detail-label">Дата:</span>
+                                            <span
+                                                class="detail-value">@record.RecordDate.ToString("MMMM d, yyyy")</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-2">
+                                            <span class="detail-label">Доктор:</span>
+                                            <span class="detail-value">Д-р. @record.DoctorName</span>
+                                        </div>
+                                        <div class="mb-2">
+                                            <span class="detail-label">Клиника:</span>
+                                            <span class="detail-value">@record.Department</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(record.Description))
+                                {
+                                    <div class="mb-4">
+                                        <h4 class="h6 detail-label">Описание:</h4>
+                                        <p>@record.Description</p>
+                                    </div>
+                                }
+
+                                @if (record.RecordType! == RecordType.Диагноза)
+                                {
+                                    <div class="mb-4">
+                                        <h4 class="h6 detail-label">Код за диагноза:</h4>
+                                        <p>@record.DiagnosisCode</p>
+
+                                        <h4 class="h6 detail-label">План за лечение:</h4>
+                                        <p>@record.TreatmentPlan</p>
+                                    </div>
+                                }
+
+                                @if (record.RecordType == RecordType.Резултат)
+                                {
+                                    <div class="mb-4">
+                                        <h4 class="h6 detail-label">Резултати от тест:</h4>
+                                        <p>@record.TestResults</p>
+
+                                        <h4 class="h6 detail-label">Нормален диапазон:</h4>
+                                        <p>@record.NormalRange</p>
+                                    </div>
+                                }
+
+                                @if (record.RecordType == RecordType.Лекарства)
+                                {
+                                    <div class="mb-4">
+                                        <h4 class="h6 detail-label">Подробности за лекарствата:</h4>
+                                        <p>@record.MedicationDetails</p>
+
+                                        <h4 class="h6 detail-label">Доза:</h4>
+                                        <p>@record.Dosage</p>
+
+                                        <h4 class="h6 detail-label">Инструкции:</h4>
+                                        <p>@record.Instructions</p>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(record.Notes))
+                                {
+                                    <div class="mb-4">
+                                        <h4 class="h6 detail-label">Допълнителни бележки:</h4>
+                                        <p>@record.Notes</p>
+                                    </div>
+                                }
+
+                                <div class="doctor-info">
+                                    <div class="row">
+                                        <div class="col-md-1">
+                                            <i class="bi bi-person-badge fs-3 text-primary"></i>
+                                        </div>
+                                        <div class="col-md-11">
+                                            <div><strong>Създадено от д-р. @record.DoctorName</strong></div>
+                                            <div class="small text-muted">
+                                                <span>@record.DoctorSpecialty</span> |
+                                                <span>Създадено: @record.CreatedDate.ToString("MMM d, yyyy") в @record.CreatedDate.ToString("h:mm tt")</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Handle record card clicks
+            const recordCards = document.querySelectorAll('.record-card');
+
+            recordCards.forEach(card => {
+                card.addEventListener('click', function () {
+                    // Remove active class from all cards
+                    recordCards.forEach(c => c.classList.remove('active'));
+
+                    // Add active class to clicked card
+                    this.classList.add('active');
+
+                    // In a real application, you would load the record details via AJAX
+                    // For this example, we'll just show an alert
+                    const recordId = this.getAttribute('data-record-id');
+                    console.log('Loading details for record: ' + recordId);
+
+                    // In production, you'd make an AJAX call here to load the record details
+                    // fetch('/api/records/' + recordId)
+                    //   .then(response => response.json())
+                    //   .then(data => updateRecordDetails(data));
+                });
+            });
+
+            // Filter form submission
+            const filterForm = document.getElementById('filterForm');
+            if (filterForm) {
+                filterForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    // In a real application, you would apply the filters via AJAX
+                    console.log('Applying filters...');
+
+                    // Example of how to get filter values
+                    const recordType = document.getElementById('recordType').value;
+                    const dateRange = document.getElementById('dateRange').value;
+                    const doctor = document.getElementById('doctor').value;
+                    const searchTerm = document.querySelector('input[placeholder="Search records..."]').value;
+
+                    console.log({recordType, dateRange, doctor, searchTerm});
+
+                    // In production, you'd make an AJAX call here to filter the records
+                    // fetch('/api/records/filter?recordType=' + recordType + '&dateRange=' + dateRange + '&doctor=' + doctor + '&searchTerm=' + searchTerm)
+                    //   .then(response => response.json())
+                    //   .then(data => updateRecordsList(data));
+                });
+            }
+        });
+
+        // Helper function to update record details (would be used with AJAX)
+        function updateRecordDetails(record) {
+            // Update the record details section with the data from the server
+            document.getElementById('recordDetails').innerHTML = `
+            <h3 class="h4 mb-3">${record.title}</h3>
+            <!-- Additional record details would be populated here -->
+        `;
+        }
+
+        // Helper function to update records list (would be used with AJAX)
+        function updateRecordsList(records) {
+            // Update the records list with the filtered data from the server
+            const recordListContainer = document.querySelector('.record-list');
+            // Clear existing records
+            recordListContainer.innerHTML = '';
+
+            // Add new records based on filter results
+            if (records.length === 0) {
+                recordListContainer.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-clipboard-x empty-state-icon"></i>
+                    <h3 class="h5">No Records Found</h3>
+                    <p class="text-muted">No medical records match your current filters.</p>
+                </div>
+            `;
+            } else {
+                // Loop through records and create cards
+                records.forEach(record => {
+                    const tagClass = getTagClass(record.recordType);
+
+                    const recordCard = document.createElement('div');
+                    recordCard.className = 'card record-card';
+                    recordCard.setAttribute('data-record-id', record.id);
+
+                    recordCard.innerHTML = `
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <div class="record-date">${formatDate(record.recordDate)}</div>
+                                    <div class="record-type">${record.title}</div>
+                                    <div class="record-doctor">Dr. ${record.doctorName}</div>
+                                </div>
+                                <div>
+                                    <span class="record-tag ${tagClass}">${record.recordType}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    recordCard.addEventListener('click', function () {
+                        // Handle record selection
+                        document.querySelectorAll('.record-card').forEach(c => c.classList.remove('active'));
+                        this.classList.add('active');
+                        // Load record details
+                        console.log('Loading details for record: ' + record.id);
+                        // updateRecordDetails(record);
+                    });
+
+                    recordListContainer.appendChild(recordCard);
+                });
+            }
+        }
+
+        // Helper function to get the appropriate tag class based on record type
+        function getTagClass(recordType) {
+            const type = recordType.toLowerCase();
+            switch (type) {
+                case 'diagnosis':
+                    return 'tag-diagnosis';
+                case 'test':
+                    return 'tag-test';
+                case 'medication':
+                    return 'tag-medication';
+                case 'vaccination':
+                    return 'tag-vaccination';
+                case 'appointment':
+                    return 'tag-appointment';
+                default:
+                    return '';
+            }
+        }
+
+        // Helper function to format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = {month: 'short', day: 'numeric', year: 'numeric'};
+            return date.toLocaleDateString('en-US', options);
+        }
+    </script>
+}
